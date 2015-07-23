@@ -1,0 +1,1 @@
+Testing readme to add comments when Shiny's showcase mode is active.

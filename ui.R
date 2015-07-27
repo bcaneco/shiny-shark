@@ -1,33 +1,34 @@
 library(shiny)
 
+
+# Define input widget for lognormal distribution
+logN.Input <- function(title, prefix, mu.value, sd.value){
+  column(4, wellPanel(
+    h4(title),
+    sliderInput(paste0(prefix, "_mu"), "Expected Value:", min = 0, max = 1, mu.value),
+    sliderInput(paste0(prefix, "_sd"), "Standard deviation:", min = 0, max = 1, sd.value)
+  ))
+}
+
+
+
 shinyUI(
+
   navbarPage("Impact of longlining in sharks: simulation of mitigation measures",
              
              tabPanel("Input Distributions",
+                      
+                      tags$style(type="text/css",
+                                 "label {font-size: 11px;}",
+                                 ".recalculating {opacity: 1.0;}"
+                      ),
+                      
                       fluidRow(
                         h3("Catch model"),
-                       
-                        column(4, wellPanel(
-                               h4("Shallow hooks"),
-                               sliderInput("shl_mu", "Expected Value",  
-                                           min = 0, max = 1, value = 0.02),
-                               sliderInput("shl_sd", "Standard deviation:",  
-                                           min = 0, max = 1, value = 0.06)
-                        )),
-                        column(4, wellPanel(
-                          h4("Deep hooks"),
-                          sliderInput("deep_mu", "Expected Value",  
-                                      min = 0, max = 1, value = 0.02),
-                          sliderInput("deep_sd", "Standard deviation:",  
-                                      min = 0, max = 1, value = 0.06)
-                        )),
-                        column(4,wellPanel(
-                          h4("Shark-lines hooks"),
-                          sliderInput("shkln_mu", "Expected Value",  
-                                      min = 0, max = 1, value = 0.02),
-                          sliderInput("shkln_sd", "Standard deviation:",  
-                                      min = 0, max = 1, value = 0.06)
-                        ))),
+                        logN.Input("Shallow Hooks", "shll", mu.value = 0.001, sd.value = 0.06),
+                        logN.Input("Deep Hooks", "deep", mu.value = 0.7, sd.value = 0.06),
+                        logN.Input("Shark-line Hooks", "shkln", mu.value = 0.1, sd.value = 0.6)
+                        ),
                       
                       fluidRow(
                         h3("Fate model")

@@ -5,8 +5,8 @@ library(shiny)
 logN.Input <- function(title, prefix, mu.value, sd.value){
   column(2, wellPanel(
     h4(title),
-    sliderInput(paste0(prefix, "_mu"), "Expected Value:", min = 0, max = 1, step = 0.2, mu.value),
-    sliderInput(paste0(prefix, "_sd"), "Standard deviation:", min = 0, max = 1, step = 0.2, sd.value)
+    sliderInput(paste0(prefix, "_mu"), "Expected Value:", min = 0, max = 1, step = 0.1, value = mu.value),
+    sliderInput(paste0(prefix, "_sd"), "Standard deviation:", min = 0, max = 1, step = 0.1, value = sd.value)
   ))
 }
 
@@ -23,22 +23,18 @@ shinyUI(
                                  ".recalculating {opacity: 1.0;}"
                       ),
                       
-                      fluidRow(
-                        h3("Catch model"),
-                        logN.Input("Shallow Hooks", "shll", mu.value = 0.001, sd.value = 0.06),
-                        logN.Input("Deep Hooks", "deep", mu.value = 0.7, sd.value = 0.06),
-                        logN.Input("Shark-line Hooks", "shkln", mu.value = 0.1, sd.value = 0.6),
+                      tabsetPanel(
+                        tabPanel("Catch Model",
+                                 fluidRow(column(6, plotOutput("catchPlot"))),
+                                 fluidRow(
+                                   logN.Input("Shark-line Hooks", "shkln", mu.value = 0.1, sd.value = 0.6),
+                                   logN.Input("Shallow Hooks", "shll", mu.value = 0.001, sd.value = 0.06),
+                                   logN.Input("Deep Hooks", "deep", mu.value = 0.7, sd.value = 0.06)
+                                 )),
                         
-                        column(6,
-                               plotOutput("catchPlot"))
-                        
-                        ),
-                      
-                      fluidRow(
-                        h3("Fate model")
-                        
-                      )
-             ),
+                        tabPanel("Fate Model",
+                                 fluidRow()
+                        ))),
              
              tabPanel("Management Scenarios"),
              tabPanel("Simulation Outputs")

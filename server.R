@@ -1,14 +1,30 @@
 
+# Preamble ~~~~~~~~~
 library(shiny)
+require(ggplot2)
+require(dplyr)
+require(data.table)
 
+source("code/aux_functions.r")
+
+
+# set theme for ggplot
+theme_set(theme_bw())
+
+
+# R components to output
 shinyServer(function(input, output) {
 
   # render a plot for the catches
   output$catchPlot <- renderPlot({
-    x <- seq(1,3)
-    y <- c(input$shll_mu, input$deep_mu, input$shkln_mu)
-    par(mar = c(5, 4, 0, 1))
-    plot(x, y, main = "")
+    
+    # join hyperparameters of catches in a list (catch per 100 hooks)
+    ctby <- list(shkln  = list(mu_shkln = input$shkln_mu, sd_shkln = input$shkln_sd, label = "Shark-line"),
+                 shllwR = list(mu_shll  = input$shll_mu,  sd_shll  = input$shll_sd,  label = "Shallow"),
+                 deep   = list(mu_deep  = input$deep_mu,  sd_deep  = input$deep_sd,  label = "Deep"))
+    
+    print(plot.cbty(ctby))
+    
   })
   
   

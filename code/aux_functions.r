@@ -38,7 +38,7 @@ plot.cbty <- function(cbty.hypar){
   cbtyDstn <- rbindlist(cbtyDstn)
   
   # ~~ data prep for plotting
-  cbtyDstn$hookCateg <- factor(cbtyDstn$hookCateg, levels = c("Shark-line", "Shallow", "Deep"))
+  cbtyDstn$hookCateg <- factor(cbtyDstn$hookCateg, levels = c("Shark line", "Shallow", "Deep"))
   
   # ~~ plotting  
   cbtyPlots <- ggplot(cbtyDstn, aes(x=cRateGrid, y=dens)) + 

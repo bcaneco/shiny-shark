@@ -18,11 +18,11 @@ sqrt_breaks <- function(x){
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# plot up input distributions of catchability parameters
-plot.cbty <- function(cbty.hypar){ 
+# Density plots of lognormally distributed MC input parameters
+plot.LogN <- function(cbty.hypar){ 
   
   # ~~ Function's arguments
-  # inputs: list object specifying the hyperparameters of input distributions for each MC parameter
+  # inputs: list object specifying the hyperparameters of logNormal input distributions for each MC parameter
 
   # ~~ computing the probability densities for cbty parameters, which follow log-N
   cbtyDstn <- lapply(cbty.hypar, 
@@ -55,4 +55,62 @@ plot.cbty <- function(cbty.hypar){
 }
 
 
+
+
+
+
+
+# plot up the input distributions
+dnsPlot.beta <- function(betaParList, main = ""){ 
+  
+  # ~~ Function's arguments
+  # inputs: list object specifying the hyperparameters of input distributions for each MC parameter
+  
+  
+#   # MC parameters with beta distributions (i.e. probability parameters) --------------------------------------------
+#   ProbLayers <- list(layer    = c("lhk", "bo", "mbo", "mrt", "iw", "mrl"), 
+#                      plotTitle  = c('Probability of lip-hooking given hook type', 
+#                                     'Probability of bite-off given hook trace & hooking location', 
+#                                     'Probability of bitten-off dying given hooking location',
+#                                     'Probability of on-hook dying given hooking location',
+#                                     'Probability of released in-water',
+#                                     'Probability of released dying given hooking location and where released'),
+#                      fileSuffix = c("Lip-hooking", "Bite-off_prob", "Bite-off_mort", "On-Hook_mort",
+#                                     "In-Water_release", "Released_mort"))
+  
+  
+  
+  layerDstn <- lapply(betaParList, 
+                      function(x){
+                        p <- x[[1]] 
+                        n <- x[[2]]
+                        succ <- n*p
+                        fail <- n*(1-p) 
+                        #CV <- sqrt((1-p)/((n + 1) * p)) * 100
+                        pRange <- qbeta(c(0.000001, 0.999999), succ, fail)
+                        dat <- data.frame(pGrid = seq(pRange[1], pRange[2], length = 500))
+                        dat <- mutate(dat, dens = dbeta(pGrid, succ, fail), 
+                                      parLabel = x[[3]])
+                        return(dat)
+                      })
+  
+  layerDstn <- rbindlist(layerDstn)
+  
+    # ~~ plotting  
+  parDstnPlots <- ggplot(layerDstn, aes(x=pGrid, y=dens)) + 
+    geom_line(aes(col = parLabel))+
+    geom_area(aes(fill=parLabel), position = "dodge", alpha=0.4) + 
+    labs(x ='Probability', y = 'Density', title = main) +
+    guides(fill=guide_legend(title=NULL), col=guide_legend(title=NULL)) +
+    scale_colour_manual(values = DsctCols) +
+    scale_fill_manual(values = DsctCols)
+  
+  
+  # remove plot's legend if only one parameter involved in current layer
+  if(length(betaParList) == 1){ 
+    parDstnPlots <- parDstnPlots + theme(legend.position="none")
+  }else parDstnPlots
+  
+  
+}
 

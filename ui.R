@@ -38,15 +38,13 @@ shinyUI(
                       ),
                       
                       sidebarLayout(
-                        
                         sidebarPanel(width = 2,
                                      #h3("Hey, try me out"),
                                      selectInput("spp", label = h4("Select a species"), 
                                                  choices = list("Oceanic whitetip shark" = 1, "Silky shark" = 2), 
                                                  selected = 1),
-                                     p("Here we can make general comments about setting things up, etc")
+                                     em("Here we can make general comments about setting things up, etc")
                         ),
-                        
                         mainPanel(
                           tabsetPanel(
                             tabPanel("Catch Model",
@@ -115,7 +113,19 @@ shinyUI(
                             ))))),
              
              tabPanel("Management Scenarios"),
-             tabPanel("Simulation Outputs")
+             
+             tabPanel("Simulation Outputs",
+                      tabsetPanel(
+                        tabPanel("Contrast Plots",
+                                 fluidRow(column(5, plotOutput("CM_baseVsNoShallow"), offset = 1),
+                                          column(5, plotOutput("CM_baseVsNoShkline"))
+                                          )),
+                        
+                        tabPanel("Contrast summary tables",
+                                 
+                                 h4("Overall mortality rate (deaths/catch)"),
+                                 tableOutput("table"))
+                      ))
              
   ))
 

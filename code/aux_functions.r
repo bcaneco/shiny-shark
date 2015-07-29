@@ -18,7 +18,7 @@ sqrt_breaks <- function(x){
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Density plots of lognormally distributed MC input parameters
+# Density plots of lognormal distributed input parameters
 plot.LogN <- function(cbty.hypar){ 
   
   # ~~ Function's arguments
@@ -52,16 +52,13 @@ plot.LogN <- function(cbty.hypar){
     scale_colour_manual(values = DsctCols) +
     scale_fill_manual(values = DsctCols)
   
-  cbtyPlots
+  return(cbtyPlots)
 }
 
 
 
-
-
-
-
-# plot up the input distributions
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Density plots for beta distributed input parameters
 dnsPlot.beta <- function(betaParList, main = ""){ 
   
   # ~~ Function's arguments
@@ -98,7 +95,35 @@ dnsPlot.beta <- function(betaParList, main = ""){
     parDstnPlots <- parDstnPlots + theme(legend.position="none")
   }
   
-  parDstnPlots
-  
+  return(parDstnPlots)
 }
 
+
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# plot up the distribution of catch and mortality generated from the MC simulation
+plot.catchAndMort <- function(MCSims, xlab){
+  
+  # function's args
+  # son_MCSims: simulated values from the chosen SoN scenario
+  # mngOpt_MCSims: simulated values from the chosen management option scenario
+  # xlab: x-axis label
+  
+  data2plot <- MCSims %>% select(Catch, M_total, Scenario)
+  names(data2plot) <- c("Total Catch", "Total Mortality", "Scenario")
+  data2plot <- melt(data2plot, "Scenario")
+  
+  p <- ggplot(data2plot) + 
+    geom_density(aes(x = value, fill = factor(Scenario), col = factor(Scenario)), position = "dodge", alpha = 0.5) +
+    guides(fill=guide_legend(title=NULL), col=guide_legend(title=NULL)) +
+    labs(y = "Density", x = xlab) +
+    theme(legend.position="top") +
+    scale_colour_manual(values = DsctCols) +
+    scale_fill_manual(values = DsctCols) +
+    #facet_grid(variable~.) 
+    #facet_grid(Scenario~variable) 
+    facet_wrap(~variable) 
+  return(p)
+  
+}

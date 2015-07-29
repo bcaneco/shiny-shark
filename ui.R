@@ -2,12 +2,12 @@ library(shiny)
 
 
 # Define input widget for lognormal distribution
-logN.input <- function(title, suffix, mu.value, sd.value){
+logN.input <- function(title, suffix, mu.value, cv.value){
   wellPanel(
     style = "padding: 5px;",
     h5(title),
-    sliderInput(paste0("mu_", suffix), "Expected Value:", min = 0, max = 1, step = 0.1, value = mu.value),
-    sliderInput(paste0("sd_", suffix), "Standard deviation:", min = 0, max = 1, step = 0.1, value = sd.value)
+    sliderInput(paste0("mu_", suffix), "Mean catch:", min = 0, max = 5, step = 0.1, value = mu.value),
+    sliderInput(paste0("cv_", suffix), "Coef. variation (%):", min = 0, max = 100, step = 5, value = cv.value)
     )         
 }
 
@@ -18,8 +18,8 @@ beta.input <- function(title, suffix, p.value, n.value){
   wellPanel(
     style = "padding: 5px;",
     h5(title),
-    sliderInput(paste0("p_", suffix), "Expected Probability:", min = 0, max = 1, step = 0.05, value = p.value),
-    sliderInput(paste0("n_", suffix), "Sample Size:", min = 0, max = 10000, step = 25, value = n.value)
+    sliderInput(paste0("p_", suffix), "Expected probability:", min = 0, max = 1, step = 0.05, value = p.value),
+    sliderInput(paste0("n_", suffix), "Sample size:", min = 0, max = 10000, step = 25, value = n.value)
   )
 }
 
@@ -48,21 +48,18 @@ shinyUI(
                         ),
                         
                         mainPanel(
-                          
                           tabsetPanel(
                             tabPanel("Catch Model",
-                                     
                                      h4("Catch Rate per 100 hooks in:"),
                                      fluidRow(
-                                       column(3, logN.input("Shark lines", "shkln", mu.value = 0.1, sd.value = 0.6), offset = 2),
-                                       column(3, logN.input("Shallow Hooks", "shll", mu.value = 0.001, sd.value = 0.06)),
-                                       column(3, logN.input("Deep Hooks", "deep", mu.value = 0.7, sd.value = 0.06))
+                                       column(3, logN.input("Shark lines", "shkln", mu.value = 0.1, cv.value = 50), offset = 2),
+                                       column(3, logN.input("Shallow Hooks", "shll", mu.value = 0.2, cv.value = 60)),
+                                       column(3, logN.input("Deep Hooks", "deep", mu.value = 0.7, cv.value = 30))
                                        ),
                                      fluidRow(column(10, plotOutput("cbtyPlot"), offset = 2))
                                      ),
                             
                             tabPanel("Fate Model",
-                                     
                                      h4("Probability of lip hook (vs. gut hook) given:"),
                                      fluidRow(
                                        column(3, beta.input("C-Hook", "LHP.C", p.value = 0.1, n.value = 200), offset = 2),

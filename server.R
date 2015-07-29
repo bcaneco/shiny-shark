@@ -20,9 +20,9 @@ shinyServer(function(input, output) {
   output$cbtyPlot <- renderPlot({
     
     # join hyperparameters of catches in a list (catch per 100 hooks)
-    ctby.hyp <- list(list(input$mu_shkln, input$sd_shkln, label = "Shark line"),
-                     list(input$mu_shll,  input$sd_shll,  label = "Shallow"),
-                     list(input$mu_deep,  input$sd_deep,  label = "Deep"))
+    ctby.hyp <- list(list(input$mu_shkln, input$cv_shkln, label = "Shark line"),
+                     list(input$mu_shll,  input$cv_shll,  label = "Shallow"),
+                     list(input$mu_deep,  input$cv_deep,  label = "Deep"))
     
     print(plot.LogN(ctby.hyp))
   })

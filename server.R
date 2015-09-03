@@ -22,7 +22,7 @@ MC.fakeData <- data.frame(
   M_total = c(rpois(1000, 50000), rpois(1000, 40000), rpois(1000, 30000), rpois(1000, 35000), rpois(1000, 45000))
 )
 
-MC.fakeData <- mutate(fakeMC, M_ret_gut = M_total * 0.2,  M_ret_lip = M_total * 0.15, 
+MC.fakeData <- mutate(MC.fakeData, M_ret_gut = M_total * 0.2,  M_ret_lip = M_total * 0.15, 
                       M_water_lip = M_total * 0.1, M_water_gut = M_total * 0.05,
                       M_Boff_lip = M_total * 0.15, M_Boff_gut = M_total * 0.1,
                       M_boat_lip = M_total * 0.1, M_boat_gut = M_total * 0.15,
@@ -62,54 +62,53 @@ shinyServer(function(input, output) {
   
   # Lip-hook probability 
   output$LHP <- renderPlot({
-    LHP.hyp <- list(list(input$p_LHP.J, input$n_LHP.J, label = "J-Hook"),
-                    list(input$p_LHP.T, input$n_LHP.T, label = "T-Hook"),
-                    list(input$p_LHP.C, input$n_LHP.C, label = "C-Hook"))
+    LHP.hyp <- list(list(input$p_LHP.J, input$cv_LHP.J, label = "J-Hook"),
+                    list(input$p_LHP.T, input$cv_LHP.T, label = "T-Hook"),
+                    list(input$p_LHP.C, input$cv_LHP.C, label = "C-Hook"))
     print(dnsPlot.beta(LHP.hyp, main = 'Lip-hooking given hook type'))
   })
   
   # Bite-off probability
   output$BOP <- renderPlot({
-    BOP.hyp <- list(list(input$p_BOP.ML, input$n_BOP.ML, label = "Mono & Lip"),
-                    list(input$p_BOP.MG, input$n_BOP.MG, label = "Mono & Gut"),
-                    list(input$p_BOP.WL, input$n_BOP.WL, label = "Wire & Lip"),
-                    list(input$p_BOP.WG, input$n_BOP.WG, label = "Wire & Gut"))
+    BOP.hyp <- list(list(input$p_BOP.ML, input$cv_BOP.ML, label = "Mono & Lip"),
+                    list(input$p_BOP.MG, input$cv_BOP.MG, label = "Mono & Gut"),
+                    list(input$p_BOP.WL, input$cv_BOP.WL, label = "Wire & Lip"),
+                    list(input$p_BOP.WG, input$cv_BOP.WG, label = "Wire & Gut"))
     print(dnsPlot.beta(BOP.hyp, main = 'Bite-off given hook trace & hooking location'))
   })
   
   
   # Bite-off mortality
   output$BOM <- renderPlot({
-    BOM.hyp <- list(list(input$p_BOM.L, input$n_BOM.L, label = "Lip-hooked"),
-                    list(input$p_BOM.G, input$n_BOM.G, label = "Gut-hooked"))
+    BOM.hyp <- list(list(input$p_BOM.L, input$cv_BOM.L, label = "Lip-hooked"),
+                    list(input$p_BOM.G, input$cv_BOM.G, label = "Gut-hooked"))
     print(dnsPlot.beta(BOM.hyp, main = 'Bite-off shark is dead given hooking location'))
   })
 
   
   # On-board retrieval mortality
   output$RM <- renderPlot({
-    RM.hyp <- list(list(input$p_RM.L, input$n_RM.L, label = "Lip-hooked"),
-                    list(input$p_RM.G, input$n_RM.G, label = "Gut-hooked"))
+    RM.hyp <- list(list(input$p_RM.L, input$cv_RM.L, label = "Lip-hooked"),
+                    list(input$p_RM.G, input$cv_RM.G, label = "Gut-hooked"))
     print(dnsPlot.beta(RM.hyp, main = 'Retrieved shark is dead given hooking location'))
   })
   
   
   # In-water release probability
   output$WRP <- renderPlot({
-    WRP.hyp <- list(list(input$p_WRP, input$n_WRP, label = ""))
+    WRP.hyp <- list(list(input$p_WRP, input$cv_WRP, label = ""))
     print(dnsPlot.beta(WRP.hyp, main = 'In-water release'))
   })
     
   
   # Upon Release Mortality
   output$URM <- renderPlot({
-    URM.hyp <- list(list(input$p_URM.WL, input$n_URM.WL, label = "In-water & Lip"),
-                    list(input$p_URM.WG, input$n_URM.WG, label = "In-water & Gut"),
-                    list(input$p_URM.LL, input$n_URM.LL, label = "Landed & Lip"),
-                    list(input$p_URM.LG, input$n_URM.LG, label = "Landed & Gut"))
+    URM.hyp <- list(list(input$p_URM.WL, input$cv_URM.WL, label = "In-water & Lip"),
+                    list(input$p_URM.WG, input$cv_URM.WG, label = "In-water & Gut"),
+                    list(input$p_URM.LL, input$cv_URM.LL, label = "Landed & Lip"),
+                    list(input$p_URM.LG, input$cv_URM.LG, label = "Landed & Gut"))
     print(dnsPlot.beta(URM.hyp, main = 'Released shark is dead given hooking location and where released'))
   })
-  
   
   
   

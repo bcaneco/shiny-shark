@@ -22,7 +22,7 @@ sqrt_breaks <- function(x){
 plot.LogN <- function(cbty.hypar){ 
   
   # ~~ Function's arguments
-  # inputs: list object specifying the hyperparameters of logNormal input distributions for each MC parameter
+  # cbty.hypar: list object specifying the hyperparameters of logNormal input distributions for each MC parameter
 
   # ~~ computing the probability densities for cbty parameters, which follow log-N
   cbtyDstn <- lapply(cbty.hypar, 
@@ -62,15 +62,15 @@ plot.LogN <- function(cbty.hypar){
 dnsPlot.beta <- function(betaParList, main = ""){ 
   
   # ~~ Function's arguments
-  # inputs: list object specifying the hyperparameters of input distributions for each MC parameter
+  # betaParList: list object specifying the hyperparameters of distributions for each MC parameter, as well as the parameter's label
   
   layerDstn <- lapply(betaParList, 
                       function(x){
                         p <- x[[1]] 
-                        n <- x[[2]]
-                        succ <- n*p
-                        fail <- n*(1-p) 
-                        #CV <- sqrt((1-p)/((n + 1) * p)) * 100
+                        # If Beta's constraint p(1-p)>var is not met, adjust the input cv to highest possible under the constraint
+                        cv <- ifelse(x[[2]]/100 < sqrt((1-p)/p), x[[2]]/100, sqrt((1-p)/p) * 0.999)
+                        succ <- (1-p)/cv^2 - p
+                        fail <- (1-p)^2/(cv^2*p) + p - 1
                         pRange <- qbeta(c(0.000001, 0.999999), succ, fail)
                         dat <- data.frame(pGrid = seq(pRange[1], pRange[2], length = 300))
                         dat <- mutate(dat, dens = dbeta(pGrid, succ, fail), 
@@ -80,7 +80,7 @@ dnsPlot.beta <- function(betaParList, main = ""){
   
   layerDstn <- rbindlist(layerDstn)
   
-    # ~~ plotting  
+  # ~~ plotting  
   parDstnPlots <- ggplot(layerDstn, aes(x=pGrid, y=dens)) + 
     geom_line(aes(col = parLabel))+
     geom_area(aes(fill=parLabel), position = "dodge", alpha=0.4) + 
@@ -88,7 +88,6 @@ dnsPlot.beta <- function(betaParList, main = ""){
     guides(fill=guide_legend(title=NULL), col=guide_legend(title=NULL)) +
     scale_colour_manual(values = DsctCols) +
     scale_fill_manual(values = DsctCols)
-  
   
   # remove plot's legend if only one parameter involved in current layer
   if(length(betaParList) == 1){ 
@@ -106,8 +105,7 @@ dnsPlot.beta <- function(betaParList, main = ""){
 plot.catchAndMort <- function(MCSims, xlab){
   
   # function's args
-  # son_MCSims: simulated values from the chosen SoN scenario
-  # mngOpt_MCSims: simulated values from the chosen management option scenario
+  # MCSims: simulated values from the chosen SoN scenario
   # xlab: x-axis label
   
   data2plot <- MCSims %>% select(Catch, M_total, Scenario)

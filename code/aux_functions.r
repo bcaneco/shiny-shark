@@ -5,6 +5,15 @@ DsctCols <- c("dodgerblue2", "olivedrab3", "firebrick2", "gold2")
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Computing the upper limit of the CV in beta dstns, given the constraint CV < sqrt(1-mean)/mean
+BetaCV_UppLim <- function(chosenP){
+  uppLim <- min(floor(sqrt((1-chosenP)/chosenP) * 99.99), 100)
+  return(uppLim)
+}
+
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Handy function for generating breaks when ggplotting on sqrt transformed axis
 sqrt_breaks <- function(x){
   x <- as.numeric(x)

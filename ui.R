@@ -6,9 +6,9 @@ logN.input <- function(title, suffix, mu.value, cv.value){
   wellPanel(
     style = "padding: 5px;",
     h5(title),
-    sliderInput(paste0("mu_", suffix), "Mean catch:", min = 0, max = 5, step = 0.1, value = mu.value),
-    sliderInput(paste0("cv_", suffix), "Coef. variation (%):", min = 0, max = 100, step = 5, value = cv.value)
-    )         
+    sliderInput(paste0("mu_", suffix), "Mean catch:", min = 0, max = 5, step = 0.1, value = mu.value, ticks = FALSE),
+    sliderInput(paste0("cv_", suffix), "Coef. variation (%):", min = 0, max = 100, step = 5, value = cv.value, ticks = FALSE)
+    )
 }
 
 
@@ -18,10 +18,11 @@ beta.input <- function(title, suffix, p.value, cv.value){
   wellPanel(
     style = "padding: 5px;",
     h5(title),
-    sliderInput(paste0("p_", suffix), "Expected probability:", min = 0, max = 1, step = 0.05, value = p.value),
-    sliderInput(paste0("cv_", suffix), "Coef. variation:", min = 0, max = 100, step = 5, value = cv.value)
+    sliderInput(paste0("p_", suffix), "Expected probability:", min = 0, max = 1, step = 0.05, value = p.value, ticks = FALSE),
+    sliderInput(paste0("cv_", suffix), "Coef. variation (%):", min = 0, max = 100, step = 5, value = cv.value, ticks = FALSE)
   )
 }
+
 
 
 
@@ -40,10 +41,11 @@ shinyUI(
                       sidebarLayout(
                         sidebarPanel(width = 2,
                                      #h3("Hey, try me out"),
-                                     selectInput("spp", label = h4("Select a species"), 
+                                     selectInput("spp", label = h4("Select the species"), 
                                                  choices = list("Oceanic whitetip shark" = 1, "Silky shark" = 2), 
                                                  selected = 1),
-                                     em("Here we can make general comments about setting things up, etc")
+                                     em("NOTE: The upper limits of the CV's for the probability inputs are specified by the Beta distn constraint that 
+                                        CV < sqrt((1-mean)/mean)")
                         ),
                         mainPanel(
                           tabsetPanel(
@@ -64,6 +66,7 @@ shinyUI(
                                        column(3, beta.input("J-Hook", "LHP.J", p.value = 0.2, cv.value = 25)),
                                        column(3, beta.input("T-Hook", "LHP.T", p.value = 0.3, cv.value = 25))
                                      ),
+
                                      fluidRow(column(10, plotOutput("LHP"), offset = 2)),
                                      
                                      hr(),

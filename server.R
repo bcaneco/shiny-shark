@@ -38,7 +38,35 @@ MC.fakeDataSummary <- group_by(MC.fakeData, Scenario) %>% summarise("10th Perc" 
 
 
 # R components to output
-shinyServer(function(input, output) {
+shinyServer(function(input, output, session) {
+  
+  
+  # --------------------------------------------------------------------------- #
+  # ---- Setting upper limits of slidebars for the CV input parameters   ------ #
+  # --------------------------------------------------------------------------- #
+  
+  #
+  # The constrain CV < sqrt(1-mean)/mean in the Beta dstn forces an upper limit in the user's choice of CV in the  associated slider input
+  observe({
+    updateSliderInput(session, "cv_LHP.C", max = BetaCV_UppLim(input$p_LHP.C))
+    updateSliderInput(session, "cv_LHP.J", max = BetaCV_UppLim(input$p_LHP.J))
+    updateSliderInput(session, "cv_LHP.T", max = BetaCV_UppLim(input$p_LHP.T))
+    updateSliderInput(session, "cv_BOP.ML", max = BetaCV_UppLim(input$p_BOP.ML))
+    updateSliderInput(session, "cv_BOP.MG", max = BetaCV_UppLim(input$p_BOP.MG))
+    updateSliderInput(session, "cv_BOP.WL", max = BetaCV_UppLim(input$p_BOP.WL))
+    updateSliderInput(session, "cv_BOP.WG", max = BetaCV_UppLim(input$p_BOP.WG))
+    updateSliderInput(session, "cv_BOM.L", max = BetaCV_UppLim(input$p_BOM.L))
+    updateSliderInput(session, "cv_BOM.G", max = BetaCV_UppLim(input$p_BOM.G))
+    updateSliderInput(session, "cv_RM.L", max = BetaCV_UppLim(input$p_RM.L))
+    updateSliderInput(session, "cv_RM.G", max = BetaCV_UppLim(input$p_RM.G))
+    updateSliderInput(session, "cv_WRP", max = BetaCV_UppLim(input$p_WRP))
+    updateSliderInput(session, "cv_URM.WL", max = BetaCV_UppLim(input$p_URM.WL))
+    updateSliderInput(session, "cv_URM.WG", max = BetaCV_UppLim(input$p_URM.WG))
+    updateSliderInput(session, "cv_URM.LL", max = BetaCV_UppLim(input$p_URM.LL))
+    updateSliderInput(session, "cv_URM.LG", max = BetaCV_UppLim(input$p_URM.LG))
+    
+  })
+  
   
   
   # -------------------------------------------------------- #
@@ -109,6 +137,13 @@ shinyServer(function(input, output) {
                     list(input$p_URM.LG, input$cv_URM.LG, label = "Landed & Gut"))
     print(dnsPlot.beta(URM.hyp, main = 'Released shark is dead given hooking location and where released'))
   })
+  
+  
+  
+  
+  
+
+  
   
   
   

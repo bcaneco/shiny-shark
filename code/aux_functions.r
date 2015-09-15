@@ -44,6 +44,13 @@ plot.LogN <- function(cbty.hypar){
                        dat <- data.frame(cRateGrid = seq(ctchRge[1], ctchRge[2], length = 300))
                        dat <- mutate(dat, dens = dlnorm(cRateGrid, mu, sigma), 
                                      hookCateg = x[[3]])
+                       # hack to produce spike at expected x (as above steps return all values == Inf -> no good for plotting)
+                       if(CV_x == 0){
+                         dat <- data.frame(cRateGrid = c(E_x, seq(ctchRge[1]*0.90, ctchRge[2]*1.10, length = 99)),
+                                           dens = c(Inf, rep(0, 99)), 
+                                           hookCateg = x[[3]]) %>% arrange(cRateGrid)
+                       }
+                       
                        return(dat)
                      })
   cbtyDstn <- rbindlist(cbtyDstn)
@@ -56,7 +63,6 @@ plot.LogN <- function(cbty.hypar){
     geom_line(aes(col = hookCateg)) +
     geom_area(aes(fill=hookCateg), position = "dodge", alpha=0.4)+
     labs(x ='Catch per 100 hooks', y = 'Density', title = 'Catch rate by hook position') +
-    #scale_x_continuous(trans = "sqrt", breaks = sqrt_breaks) + 
     guides(fill=guide_legend(title=NULL), col=guide_legend(title=NULL)) +
     scale_colour_manual(values = DsctCols) +
     scale_fill_manual(values = DsctCols)
@@ -75,15 +81,17 @@ dnsPlot.beta <- function(betaParList, main = ""){
   
   layerDstn <- lapply(betaParList, 
                       function(x){
-                        p <- x[[1]] 
+                        p <- x[[1]]
                         # If Beta's constraint p(1-p)>var is not met, adjust the input cv to highest possible under the constraint
                         cv <- ifelse(x[[2]]/100 < sqrt((1-p)/p), x[[2]]/100, sqrt((1-p)/p) * 0.999)
                         succ <- (1-p)/cv^2 - p
                         fail <- (1-p)^2/(cv^2*p) + p - 1
-                        pRange <- qbeta(c(0.000001, 0.999999), succ, fail)
-                        dat <- data.frame(pGrid = seq(pRange[1], pRange[2], length = 300))
-                        dat <- mutate(dat, dens = dbeta(pGrid, succ, fail), 
-                                      parLabel = x[[3]])
+                        pGrid <- seq(0, 1, length = 300)
+                        dat <- data.frame(pGrid, dens = dbeta(pGrid, succ, fail), parLabel = x[[3]])
+                        # hack to return spike at p=1 (as above steps return NaNs)
+                        if(p == 1) dat$dens <- c(rep(0, 299), Inf)
+                        # hack to return spike at chosen p when CV = 0 (as above steps return NaNs)
+                        if(cv == 0) dat <- rbind(dat, data.frame(pGrid = p, dens = Inf, parLabel = x[[3]])) %>% arrange(pGrid)
                         return(dat)
                       })
   

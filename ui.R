@@ -40,11 +40,10 @@ shinyUI(
                       
                       sidebarLayout(
                         sidebarPanel(width = 2,
-                                     #h3("Hey, try me out"),
-                                     selectInput("spp", label = h4("Select the species"), 
+                                     selectInput("spp", label = h4("Species reference values:"), 
                                                  choices = list("Oceanic whitetip shark" = 1, "Silky shark" = 2), 
                                                  selected = 1),
-                                     em("NOTE: The upper limits of the CV's for the probability inputs are specified by the Beta distn constraint that 
+                                     em("NOTE: The upper limits of CV's for probability inputs are specified by the Beta distn constraint: 
                                         CV < sqrt((1-mean)/mean)")
                         ),
                         mainPanel(

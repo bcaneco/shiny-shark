@@ -7,7 +7,7 @@ require(data.table)
 require(reshape2)
 
 source("code/aux_functions.r")
-
+source("data/MC_Analysis_InputDistributionsHyperpars_FAL&OCS.r")
 
 # set theme for ggplot
 theme_set(theme_bw())
@@ -41,12 +41,72 @@ MC.fakeDataSummary <- group_by(MC.fakeData, Scenario) %>% summarise("10th Perc" 
 shinyServer(function(input, output, session) {
   
   
-  # --------------------------------------------------------------------------- #
-  # ---- Setting upper limits of slidebars for the CV input parameters   ------ #
-  # --------------------------------------------------------------------------- #
+  # --------------------------------------------------------------------------------------------- #
+  # ----    Setting species-specific hyperparameter values based on several studies        ------ #
+  # --------------------------------------------------------------------------------------------- #
+  # 
+  # After choosing the species for the reference hyper values, the user is able to change them through the slidebars
+  observe({
+    
+    hypParVals <- switch(input$spp,
+                         "Oceanic whitetip shark" = inputsHyperPars$OCS,
+                         "Silky shark" = inputsHyperPars$FAL)
+    
+    updateSliderInput(session, "E_shkln",  value = hypParVals$cbty$shkln$E_shkln)
+    updateSliderInput(session, "cv_shkln", value = hypParVals$cbty$shkln$cv_shkln)
+    updateSliderInput(session, "E_shll",  value = hypParVals$cbty$shllwR$E_shll)
+    updateSliderInput(session, "cv_shll", value = hypParVals$cbty$shllwR$cv_shll)
+    updateSliderInput(session, "E_deep",  value = hypParVals$cbty$deep$E_deep)
+    updateSliderInput(session, "cv_deep", value = hypParVals$cbty$deep$cv_deep)
+    
+    updateSliderInput(session, "p_LHP.J", value = hypParVals$lhk$j$p_j)
+    updateSliderInput(session, "cv_LHP.J", value = hypParVals$lhk$j$cv_j)
+    updateSliderInput(session, "p_LHP.C", value = hypParVals$lhk$c$p_c)
+    updateSliderInput(session, "cv_LHP.C", value = hypParVals$lhk$c$cv_c)
+    updateSliderInput(session, "p_LHP.T", value = hypParVals$lhk$t$p_t)
+    updateSliderInput(session, "cv_LHP.T", value = hypParVals$lhk$t$cv_t)
+    
+    updateSliderInput(session, "p_BOP.ML", value = hypParVals$bo$ML$p_ML)
+    updateSliderInput(session, "cv_BOP.ML", value = hypParVals$bo$ML$cv_ML)
+    updateSliderInput(session, "p_BOP.MG", value = hypParVals$bo$MG$p_MG)
+    updateSliderInput(session, "cv_BOP.MG", value = hypParVals$bo$MG$cv_MG)
+    updateSliderInput(session, "p_BOP.WL", value = hypParVals$bo$WL$p_WL)
+    updateSliderInput(session, "cv_BOP.WL", value = hypParVals$bo$WL$cv_WL)
+    updateSliderInput(session, "p_BOP.WG", value = hypParVals$bo$WG$p_WG)
+    updateSliderInput(session, "cv_BOP.WG", value = hypParVals$bo$WG$cv_WG)
+    
+    updateSliderInput(session, "p_BOM.L", value = hypParVals$mbo$L$p_L)
+    updateSliderInput(session, "cv_BOM.L", value = hypParVals$mbo$L$cv_L)
+    updateSliderInput(session, "p_BOM.G", value = hypParVals$mbo$G$p_G)
+    updateSliderInput(session, "cv_BOM.G", value = hypParVals$mbo$G$cv_G)
+    
+    updateSliderInput(session, "p_RM.L", value = hypParVals$mrt$L$p_L)
+    updateSliderInput(session, "cv_RM.L", value = hypParVals$mrt$L$cv_L)
+    updateSliderInput(session, "p_RM.G", value = hypParVals$mrt$G$p_G)
+    updateSliderInput(session, "cv_RM.G", value = hypParVals$mrt$G$cv_G)
+    
+    updateSliderInput(session, "p_WRP", value = hypParVals$iw$IwR$p_iw)
+    updateSliderInput(session, "cv_WRP", value = hypParVals$iw$IwR$cv_iw)
+    
+    updateSliderInput(session, "p_URM.WL", value = hypParVals$mrl$LW$p_LW)
+    updateSliderInput(session, "cv_URM.WL", value = hypParVals$mrl$LW$cv_LW)
+    updateSliderInput(session, "p_URM.WG", value = hypParVals$mrl$GW$p_GW)
+    updateSliderInput(session, "cv_URM.WG", value = hypParVals$mrl$GW$cv_GW)
+    updateSliderInput(session, "p_URM.LL", value = hypParVals$mrl$LB$p_LB)
+    updateSliderInput(session, "cv_URM.LL", value = hypParVals$mrl$LB$cv_LB)
+    updateSliderInput(session, "p_URM.LG", value = hypParVals$mrl$GB$p_GB)
+    updateSliderInput(session, "cv_URM.LG", value = hypParVals$mrl$GB$cv_GB)
+    
+  })
   
+
+  
+  
+  # --------------------------------------------------------------------------------------------- #
+  # ---- Setting interactively the upper limits of slidebars for the CV input parameters   ------ #
+  # --------------------------------------------------------------------------------------------- #
   #
-  # The constrain CV < sqrt(1-mean)/mean in the Beta dstn forces an upper limit in the user's choice of CV in the  associated slider input
+  # The constrain CV < sqrt(1-mean)/mean in Beta dstn forces an upper limit in the user's choice of CV
   observe({
     updateSliderInput(session, "cv_LHP.C", max = BetaCV_UppLim(input$p_LHP.C))
     updateSliderInput(session, "cv_LHP.J", max = BetaCV_UppLim(input$p_LHP.J))
@@ -69,17 +129,23 @@ shinyServer(function(input, output, session) {
   
   
   
+  
+  
   # -------------------------------------------------------- #
   # ---- Elements for navPanel "Input Distributions"  ------ #
   # -------------------------------------------------------- #
 
+  output$value3 <- renderPrint({ input$E_shkln})
+  output$value4 <- renderPrint({ input$cv_shkln})
+  
+  
   # render a plot for input catch model ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   output$cbtyPlot <- renderPlot({
     
     # join hyperparameters of catches in a list (catch per 100 hooks)
-    ctby.hyp <- list(list(input$mu_shkln, input$cv_shkln, label = "Shark line"),
-                     list(input$mu_shll,  input$cv_shll,  label = "Shallow"),
-                     list(input$mu_deep,  input$cv_deep,  label = "Deep"))
+    ctby.hyp <- list(list(input$E_shkln, input$cv_shkln, label = "Shark line"),
+                     list(input$E_shll,  input$cv_shll,  label = "Shallow"),
+                     list(input$E_deep,  input$cv_deep,  label = "Deep"))
     
     print(plot.LogN(ctby.hyp))
   })
@@ -87,6 +153,11 @@ shinyServer(function(input, output, session) {
   
   
   # render plots for fate model input components ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  
+  
+  output$value1 <- renderPrint({ input$p_LHP.J})
+  output$value2 <- renderPrint({ input$cv_LHP.J})
   
   # Lip-hook probability 
   output$LHP <- renderPlot({

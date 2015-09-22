@@ -1,0 +1,601 @@
+/* ------------------------------------------------------------------
+/* Catch rate - sharklines Mean - blue*/
+.js-irs-0 .irs-bar {
+border-top-color: #5C85FF;
+border-bottom-color: #5C85FF;
+} 
+
+.js-irs-0 .irs-bar-edge {
+border-color: #5C85FF;
+}
+
+.js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {
+background: #3366FF;
+}
+
+/* Catch rate - sharklines CV - blue*/
+.js-irs-1 .irs-bar {
+border-top-color: #5C85FF;
+border-bottom-color: #5C85FF;
+} 
+
+.js-irs-1 .irs-bar-edge {
+border-color: #5C85FF;
+}
+
+.js-irs-1 .irs-single, .js-irs-1 .irs-bar-edge, .js-irs-1 .irs-bar {
+background: #3366FF;
+}
+
+
+
+
+/* ------------------------------------------------------------------
+/* Catch rate - shallow Mean - green*/
+.js-irs-2 .irs-bar {
+border-top-color: #94B84D;
+border-bottom-color: #94B84D;
+} 
+
+.js-irs-2 .irs-bar-edge {
+border-color: #94B84D;
+}
+
+.js-irs-2 .irs-single, .js-irs-2 .irs-bar-edge, .js-irs-2 .irs-bar {
+background: #669900;
+}
+
+/* Catch rate - shallow CV - green*/
+.js-irs-3 .irs-bar {
+border-top-color: #94B84D;
+border-bottom-color: #94B84D;
+} 
+
+.js-irs-3 .irs-bar-edge {
+border-color: #94B84D;
+}
+
+.js-irs-3 .irs-single, .js-irs-3 .irs-bar-edge, .js-irs-3 .irs-bar {
+background: #669900;
+}
+
+
+
+/* ------------------------------------------------------------------
+/* Catch rate - deep Mean - red*/
+.js-irs-4 .irs-bar {
+border-top-color: #d01010;
+border-bottom-color: #d01010;
+} 
+
+.js-irs-4 .irs-bar-edge {
+border-color: #d01010;
+}
+
+.js-irs-4 .irs-single, .js-irs-4 .irs-bar-edge, .js-irs-4 .irs-bar {
+background: #a00;
+}
+
+
+/* Catch rate - deep CV - red */
+.js-irs-5 .irs-bar {
+border-top-color: #d01010;
+border-bottom-color: #d01010;
+} 
+
+.js-irs-5 .irs-bar-edge {
+border-color: #d01010;
+}
+
+.js-irs-5 .irs-single, .js-irs-5 .irs-bar-edge, .js-irs-5 .irs-bar {
+background: #a00;
+}
+
+
+
+/* ------------------------------------------------------------------
+/* p_LHP.J - blue*/
+.js-irs-6 .irs-bar {
+border-top-color: #5C85FF;
+border-bottom-color: #5C85FF;
+} 
+
+.js-irs-6 .irs-bar-edge {
+border-color: #5C85FF;
+}
+
+.js-irs-6 .irs-single, .js-irs-6 .irs-bar-edge, .js-irs-6 .irs-bar {
+background: #3366FF;
+}
+
+/* vc_LHP.J - blue*/
+.js-irs-7 .irs-bar {
+border-top-color: #5C85FF;
+border-bottom-color: #5C85FF;
+} 
+
+.js-irs-7 .irs-bar-edge {
+border-color: #5C85FF;
+}
+
+.js-irs-7 .irs-single, .js-irs-7 .irs-bar-edge, .js-irs-7 .irs-bar {
+background: #3366FF;
+}
+
+
+
+/* ------------------------------------------------------------------
+/* p_LHP.T - green*/
+.js-irs-8 .irs-bar {
+border-top-color: #94B84D;
+border-bottom-color: #94B84D;
+} 
+
+.js-irs-8 .irs-bar-edge {
+border-color: #94B84D;
+}
+
+.js-irs-8 .irs-single, .js-irs-8 .irs-bar-edge, .js-irs-8 .irs-bar {
+background: #669900;
+}
+
+/* cv_LHP.T - green*/
+.js-irs-9 .irs-bar {
+border-top-color: #94B84D;
+border-bottom-color: #94B84D;
+} 
+
+.js-irs-9 .irs-bar-edge {
+border-color: #94B84D;
+}
+
+.js-irs-9 .irs-single, .js-irs-9 .irs-bar-edge, .js-irs-9 .irs-bar {
+background: #669900;
+}
+
+
+/* ------------------------------------------------------------------
+/*  p_LHP.C - red*/
+.js-irs-10 .irs-bar {
+border-top-color: #d01010;
+border-bottom-color: #d01010;
+} 
+
+.js-irs-10 .irs-bar-edge {
+border-color: #d01010;
+}
+
+.js-irs-10 .irs-single, .js-irs-10 .irs-bar-edge, .js-irs-10 .irs-bar {
+background: #a00;
+}
+
+
+/* cv_LHP.C - red */
+.js-irs-11 .irs-bar {
+border-top-color: #d01010;
+border-bottom-color: #d01010;
+} 
+
+.js-irs-11 .irs-bar-edge {
+border-color: #d01010;
+}
+
+.js-irs-11 .irs-single, .js-irs-11 .irs-bar-edge, .js-irs-11 .irs-bar {
+background: #a00;
+}
+
+
+
+
+/* ------------------------------------------------------------------
+/* p_BOP.ML - blue*/
+.js-irs-12 .irs-bar {
+border-top-color: #5C85FF;
+border-bottom-color: #5C85FF;
+} 
+
+.js-irs-12 .irs-bar-edge {
+border-color: #5C85FF;
+}
+
+.js-irs-12 .irs-single, .js-irs-12 .irs-bar-edge, .js-irs-12 .irs-bar {
+background: #3366FF;
+}
+
+/* cv_BOP.ML - blue*/
+.js-irs-13 .irs-bar {
+border-top-color: #5C85FF;
+border-bottom-color: #5C85FF;
+} 
+
+.js-irs-13 .irs-bar-edge {
+border-color: #5C85FF;
+}
+
+.js-irs-13 .irs-single, .js-irs-13 .irs-bar-edge, .js-irs-13 .irs-bar {
+background: #3366FF;
+}
+
+
+
+/* ------------------------------------------------------------------
+/* p_BOP.MG - green*/
+.js-irs-14 .irs-bar {
+border-top-color: #94B84D;
+border-bottom-color: #94B84D;
+} 
+
+.js-irs-14 .irs-bar-edge {
+border-color: #94B84D;
+}
+
+.js-irs-14 .irs-single, .js-irs-14 .irs-bar-edge, .js-irs-14 .irs-bar {
+background: #669900;
+}
+
+/* cv_BOP.MG - green*/
+.js-irs-15 .irs-bar {
+border-top-color: #94B84D;
+border-bottom-color: #94B84D;
+} 
+
+.js-irs-15 .irs-bar-edge {
+border-color: #94B84D;
+}
+
+.js-irs-15 .irs-single, .js-irs-15 .irs-bar-edge, .js-irs-15 .irs-bar {
+background: #669900;
+}
+
+
+/* ------------------------------------------------------------------
+/*  p_BOP.WL - red*/
+.js-irs-16 .irs-bar {
+border-top-color: #d01010;
+border-bottom-color: #d01010;
+} 
+
+.js-irs-16 .irs-bar-edge {
+border-color: #d01010;
+}
+
+.js-irs-16 .irs-single, .js-irs-16 .irs-bar-edge, .js-irs-16 .irs-bar {
+background: #a00;
+}
+
+
+/* cv_BOP.WL - red */
+.js-irs-17 .irs-bar {
+border-top-color: #d01010;
+border-bottom-color: #d01010;
+} 
+
+.js-irs-17 .irs-bar-edge {
+border-color: #d01010;
+}
+
+.js-irs-17 .irs-single, .js-irs-17 .irs-bar-edge, .js-irs-17 .irs-bar {
+background: #a00;
+}
+
+
+/* ------------------------------------------------------------------
+/*  p_BOP.WG - yellow*/
+.js-irs-18 .irs-bar {
+border-top-color: #FFD633;
+border-bottom-color: #FFD633;
+} 
+
+.js-irs-18 .irs-bar-edge {
+border-color: #FFD633;
+}
+
+.js-irs-18 .irs-single, .js-irs-18 .irs-bar-edge, .js-irs-18 .irs-bar {
+  background: rgb(230, 184, 0);
+  background: rgba(230, 184, 0, 0.7);
+}
+
+
+/* cv_BOP.WG - yellow */
+.js-irs-19 .irs-bar {
+border-top-color: #FFD633;
+border-bottom-color: #FFD633;
+} 
+
+.js-irs-19 .irs-bar-edge {
+border-color: #FFD633;
+}
+
+.js-irs-19 .irs-single, .js-irs-19 .irs-bar-edge, .js-irs-19 .irs-bar {
+  background: rgb(230, 184, 0);
+  background: rgba(230, 184, 0, 0.7);
+}
+
+
+
+
+
+/* ------------------------------------------------------------------
+/* p_BOM.L - blue*/
+.js-irs-20 .irs-bar {
+border-top-color: #5C85FF;
+border-bottom-color: #5C85FF;
+} 
+
+.js-irs-20 .irs-bar-edge {
+border-color: #5C85FF;
+}
+
+.js-irs-20 .irs-single, .js-irs-20 .irs-bar-edge, .js-irs-20 .irs-bar {
+background: #3366FF;
+}
+
+/* cv_BOM.L - blue*/
+.js-irs-21 .irs-bar {
+border-top-color: #5C85FF;
+border-bottom-color: #5C85FF;
+} 
+
+.js-irs-21 .irs-bar-edge {
+border-color: #5C85FF;
+}
+
+.js-irs-21 .irs-single, .js-irs-21 .irs-bar-edge, .js-irs-21 .irs-bar {
+background: #3366FF;
+}
+
+
+
+/* ------------------------------------------------------------------
+/* p_BOM.G - green*/
+.js-irs-22 .irs-bar {
+border-top-color: #94B84D;
+border-bottom-color: #94B84D;
+} 
+
+.js-irs-22 .irs-bar-edge {
+border-color: #94B84D;
+}
+
+.js-irs-22 .irs-single, .js-irs-22 .irs-bar-edge, .js-irs-22 .irs-bar {
+background: #669900;
+}
+
+/* cv_BOM.G - green*/
+.js-irs-23 .irs-bar {
+border-top-color: #94B84D;
+border-bottom-color: #94B84D;
+} 
+
+.js-irs-23 .irs-bar-edge {
+border-color: #94B84D;
+}
+
+.js-irs-23 .irs-single, .js-irs-23 .irs-bar-edge, .js-irs-23 .irs-bar {
+background: #669900;
+}
+
+
+
+/* ------------------------------------------------------------------
+/* p_RM.L - blue*/
+.js-irs-24 .irs-bar {
+border-top-color: #5C85FF;
+border-bottom-color: #5C85FF;
+} 
+
+.js-irs-24 .irs-bar-edge {
+border-color: #5C85FF;
+}
+
+.js-irs-24 .irs-single, .js-irs-24 .irs-bar-edge, .js-irs-24 .irs-bar {
+background: #3366FF;
+}
+
+/* cv_RM.L - blue*/
+.js-irs-25 .irs-bar {
+border-top-color: #5C85FF;
+border-bottom-color: #5C85FF;
+} 
+
+.js-irs-25 .irs-bar-edge {
+border-color: #5C85FF;
+}
+
+.js-irs-25 .irs-single, .js-irs-25 .irs-bar-edge, .js-irs-25 .irs-bar {
+background: #3366FF;
+}
+
+
+
+/* ------------------------------------------------------------------
+/* p_RM.G - green*/
+.js-irs-26 .irs-bar {
+border-top-color: #94B84D;
+border-bottom-color: #94B84D;
+} 
+
+.js-irs-26 .irs-bar-edge {
+border-color: #94B84D;
+}
+
+.js-irs-26 .irs-single, .js-irs-26 .irs-bar-edge, .js-irs-26 .irs-bar {
+background: #669900;
+}
+
+/* cv_RM.G - green*/
+.js-irs-27 .irs-bar {
+border-top-color: #94B84D;
+border-bottom-color: #94B84D;
+} 
+
+.js-irs-27 .irs-bar-edge {
+border-color: #94B84D;
+}
+
+.js-irs-27 .irs-single, .js-irs-27 .irs-bar-edge, .js-irs-27 .irs-bar {
+background: #669900;
+}
+
+
+
+/* ------------------------------------------------------------------
+/* p_WRP - blue*/
+.js-irs-28 .irs-bar {
+border-top-color: #5C85FF;
+border-bottom-color: #5C85FF;
+} 
+
+.js-irs-28 .irs-bar-edge {
+border-color: #5C85FF;
+}
+
+.js-irs-28 .irs-single, .js-irs-28 .irs-bar-edge, .js-irs-28 .irs-bar {
+background: #3366FF;
+}
+
+/* cv_WRP - blue*/
+.js-irs-29 .irs-bar {
+border-top-color: #5C85FF;
+border-bottom-color: #5C85FF;
+} 
+
+.js-irs-29 .irs-bar-edge {
+border-color: #5C85FF;
+}
+
+.js-irs-29 .irs-single, .js-irs-29 .irs-bar-edge, .js-irs-29 .irs-bar {
+background: #3366FF;
+}
+
+
+
+
+
+/* ------------------------------------------------------------------
+/* p_URM.WL - blue*/
+.js-irs-30 .irs-bar {
+border-top-color: #5C85FF;
+border-bottom-color: #5C85FF;
+} 
+
+.js-irs-30 .irs-bar-edge {
+border-color: #5C85FF;
+}
+
+.js-irs-30 .irs-single, .js-irs-30 .irs-bar-edge, .js-irs-30 .irs-bar {
+background: #3366FF;
+}
+
+/* p_URM.WL - blue*/
+.js-irs-31 .irs-bar {
+border-top-color: #5C85FF;
+border-bottom-color: #5C85FF;
+} 
+
+.js-irs-31 .irs-bar-edge {
+border-color: #5C85FF;
+}
+
+.js-irs-31 .irs-single, .js-irs-31 .irs-bar-edge, .js-irs-31 .irs-bar {
+background: #3366FF;
+}
+
+
+
+/* ------------------------------------------------------------------
+/* p_URM.WG - green*/
+.js-irs-32 .irs-bar {
+border-top-color: #94B84D;
+border-bottom-color: #94B84D;
+} 
+
+.js-irs-32 .irs-bar-edge {
+border-color: #94B84D;
+}
+
+.js-irs-32 .irs-single, .js-irs-32 .irs-bar-edge, .js-irs-32 .irs-bar {
+background: #669900;
+}
+
+/* cv_URM.WG - green*/
+.js-irs-33 .irs-bar {
+border-top-color: #94B84D;
+border-bottom-color: #94B84D;
+} 
+
+.js-irs-33 .irs-bar-edge {
+border-color: #94B84D;
+}
+
+.js-irs-33 .irs-single, .js-irs-33 .irs-bar-edge, .js-irs-33 .irs-bar {
+background: #669900;
+}
+
+
+/* ------------------------------------------------------------------
+/*  p_URM.LL - red*/
+.js-irs-34 .irs-bar {
+border-top-color: #d01010;
+border-bottom-color: #d01010;
+} 
+
+.js-irs-34 .irs-bar-edge {
+border-color: #d01010;
+}
+
+.js-irs-34 .irs-single, .js-irs-34 .irs-bar-edge, .js-irs-34 .irs-bar {
+background: #a00;
+}
+
+
+/* cv_URM.LL - red */
+.js-irs-35 .irs-bar {
+border-top-color: #d01010;
+border-bottom-color: #d01010;
+} 
+
+.js-irs-35 .irs-bar-edge {
+border-color: #d01010;
+}
+
+.js-irs-35 .irs-single, .js-irs-35 .irs-bar-edge, .js-irs-35 .irs-bar {
+background: #a00;
+}
+
+
+/* ------------------------------------------------------------------
+/*  p_URM.LG - yellow*/
+.js-irs-36 .irs-bar {
+border-top-color: #FFD633;
+border-bottom-color: #FFD633;
+} 
+
+.js-irs-36 .irs-bar-edge {
+border-color: #FFD633;
+}
+
+.js-irs-36 .irs-single, .js-irs-36 .irs-bar-edge, .js-irs-36 .irs-bar {
+  background: rgb(230, 184, 0);
+  background: rgba(230, 184, 0, 0.7);
+}
+
+
+/* cv_URM.LG - yellow */
+.js-irs-37 .irs-bar {
+border-top-color: #FFD633;
+border-bottom-color: #FFD633;
+} 
+
+.js-irs-37 .irs-bar-edge {
+border-color: #FFD633;
+}
+
+.js-irs-37 .irs-single, .js-irs-37 .irs-bar-edge, .js-irs-37 .irs-bar {
+  background: rgb(230, 184, 0);
+  background: rgba(230, 184, 0, 0.7);
+}
+
+
+
+

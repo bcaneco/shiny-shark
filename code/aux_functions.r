@@ -65,7 +65,8 @@ plot.LogN <- function(cbty.hypar){
     labs(x ='Catch per 100 hooks', y = 'Density', title = 'Catch rate by hook position') +
     guides(fill=guide_legend(title=NULL), col=guide_legend(title=NULL)) +
     scale_colour_manual(values = DsctCols) +
-    scale_fill_manual(values = DsctCols)
+    scale_fill_manual(values = DsctCols) +
+    theme(legend.position="bottom")
   
   return(cbtyPlots)
 }
@@ -104,7 +105,8 @@ dnsPlot.beta <- function(betaParList, main = ""){
     labs(x ='Probability', y = 'Density', title = main) +
     guides(fill=guide_legend(title=NULL), col=guide_legend(title=NULL)) +
     scale_colour_manual(values = DsctCols) +
-    scale_fill_manual(values = DsctCols)
+    scale_fill_manual(values = DsctCols) +
+    theme(legend.position="bottom")
   
   # remove plot's legend if only one parameter involved in current layer
   if(length(betaParList) == 1){ 

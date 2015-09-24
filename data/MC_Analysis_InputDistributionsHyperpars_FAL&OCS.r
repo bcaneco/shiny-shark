@@ -44,9 +44,9 @@ inputsHyperPars <- list(
     # i.e x: ML = P(Bite-off|Mono,lip), MG = P(Bite-off|Mono,gut), WL = P(Bite-off|Wire,lip), WG = P(Bite-off|Wire,gut)  ~ Beta
     #
     bo = list(ML = list(p_ML = 0.33 , cv_ML = 10, label = "Mono & Lip"),   # p_ML = E[P(Bite-off|Mono,lip)] ; source: best guess (p based on SJH's code)
-              MG = list(p_MG = 0.33 , cv_MG = 10, label = "Mono & Gut"),   # p_MG = E[P(Bite-off|Mono,gut)] ; idem
-              WL = list(p_WL = 0.01, cv_WL = 95, label = "Wire & Lip"),    # p_WL = E[P(Bite-off|Wire,lip)] ; idem
-              WG = list(p_WG = 0.01, cv_WG = 95, label = "Wire & Gut")),   # p_WG = E[P(Bite-off|Wire,gut)] ; idem
+              MG = list(p_MG = 0.40 , cv_MG = 20, label = "Mono & Gut"),   # p_MG = E[P(Bite-off|Mono,gut)] ; idem
+              WL = list(p_WL = 0.01, cv_WL = 10, label = "Wire & Lip"),    # p_WL = E[P(Bite-off|Wire,lip)] ; idem
+              WG = list(p_WG = 0.01, cv_WG = 10, label = "Wire & Gut")),   # p_WG = E[P(Bite-off|Wire,gut)] ; idem
     
     
     # ~~~~~~~
@@ -77,10 +77,10 @@ inputsHyperPars <- list(
     # dependent on: hooking location and where released
     # i.e. x: LB = P(Dead|onboard, lip), GB = P(Dead|onboard, gut), LW = P(Dead|inwater, lip), GW = P(Dead|inwater, gut) ~ Beta
     #
-    mrl = list(LB = list(p_LB = 0.19, cv_LB = 20, label = "Onboard-lip"),   # p_LB = E[P(Dead|onboard, lip)] ; source: best guess (p based on SJH's code)
-               GB = list(p_GB = 0.19, cv_GB = 20, label = "Onboard-gut"),   # p_GB = E[P(Dead|onboard, gut)] ; idem
+    mrl = list(LB = list(p_LB = 0.34, cv_LB = 15, label = "Onboard-lip"),   # p_LB = E[P(Dead|onboard, lip)] ; source: best guess (p based on SJH's code)
+               GB = list(p_GB = 0.44, cv_GB = 12, label = "Onboard-gut"),   # p_GB = E[P(Dead|onboard, gut)] ; idem
                LW = list(p_LW = 0.15, cv_LW = 25, label = "Water-lip"),   # p_LW = E[P(Dead|inwater, lip)] ; idem  
-               GW = list(p_GW = 0.15, cv_GW = 25, label = "Water-gut"))   # p_GW = E[P(Dead|inwater, gut)] ; idem
+               GW = list(p_GW = 0.19, cv_GW = 20, label = "Water-gut"))   # p_GW = E[P(Dead|inwater, gut)] ; idem
   ),
   
   
@@ -112,9 +112,9 @@ inputsHyperPars <- list(
     # i.e x: ML = P(Bite-off|Mono,lip), MG = P(Bite-off|Mono,gut), WL = P(Bite-off|Wire,lip), WG = P(Bite-off|Wire,gut)  ~ Beta
     #
     bo = list(ML = list(p_ML = 0.33, cv_ML = 10, label = "Mono & Lip"),  # p_ML = E[P(Bite-off|Mono,lip)] ; source: best guess (p based on SJH's code)
-              MG = list(p_MG = 0.33, cv_MG = 10, label = "Mono & Gut"),  # p_MG = E[P(Bite-off|Mono,gut)] ; idem
-              WL = list(p_WL = 0.01, cv_WL = 90, label = "Wire & Lip"),   # p_WL = E[P(Bite-off|Wire,lip)] ; idem
-              WG = list(p_WG = 0.01, cv_WG = 90, label = "Wire & Gut")),  # p_WG = E[P(Bite-off|Wire,gut)] ; idem
+              MG = list(p_MG = 0.72, cv_MG = 20, label = "Mono & Gut"),  # p_MG = E[P(Bite-off|Mono,gut)] ; idem
+              WL = list(p_WL = 0.01, cv_WL = 10, label = "Wire & Lip"),   # p_WL = E[P(Bite-off|Wire,lip)] ; idem
+              WG = list(p_WG = 0.01, cv_WG = 10, label = "Wire & Gut")),  # p_WG = E[P(Bite-off|Wire,gut)] ; idem
     
     
     # ~~~~~~~
@@ -145,10 +145,10 @@ inputsHyperPars <- list(
     # dependent on: hooking location and where released
     # i.e. x: LB = P(Dead|onboard, lip), GB = P(Dead|onboard, gut), LW = P(Dead|inwater, lip), GW = P(Dead|inwater, gut) ~ Beta
     #
-    mrl = list(LB = list(p_LB = 0.19, cv_LB = 20, label = "Onboard-lip"),  # p_LB = E[P(Dead|onboard, lip)] ; source: best guess (p based on SJH's code)
-               GB = list(p_GB = 0.19, cv_GB = 20, label = "Onboard-gut"),  # p_GB = E[P(Dead|onboard, gut)] ; idem
-               LW = list(p_LW = 0.15  , cv_LW = 25, label = "Water-lip"),  # p_LW = E[P(Dead|inwater, lip)] ; idem  
-               GW = list(p_GW = 0.15  , cv_GW = 25, label = "Water-gut"))  # p_GW = E[P(Dead|inwater, gut)] ; idem
+    mrl = list(LB = list(p_LB = 0.34, cv_LB = 15, label = "Onboard-lip"),  # p_LB = E[P(Dead|onboard, lip)] ; source: best guess (p based on SJH's code)
+               GB = list(p_GB = 0.44, cv_GB = 12, label = "Onboard-gut"),  # p_GB = E[P(Dead|onboard, gut)] ; idem
+               LW = list(p_LW = 0.15, cv_LW = 25, label = "Water-lip"),  # p_LW = E[P(Dead|inwater, lip)] ; idem  
+               GW = list(p_GW = 0.19, cv_GW = 20, label = "Water-gut"))  # p_GW = E[P(Dead|inwater, gut)] ; idem
   )
 )
 

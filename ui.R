@@ -24,6 +24,21 @@ beta.input <- function(title, suffix, p.value, cv.value){
 }
 
 
+# Define input widget for management options
+mng_input <- function(id, title){
+  wellPanel(
+    checkboxGroupInput(id, label = h4(title),
+                       choices = list("Ban Shark lines" = "NoShkln", "Ban wire trace" = "NoWire", 
+                                      "Ban shallow hooks" = "NoShallow", "Restrict to Circle-hooks only" = "AllCircle"),
+                       selected = NULL, inline = FALSE)
+  )
+}
+
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 shinyUI(
 
   navbarPage("Impact of longlining in sharks: simulation of mitigation measures",
@@ -47,7 +62,7 @@ shinyUI(
                                      selectInput("spp", label = h3("Choose species"), 
                                                  choices = list("Oceanic whitetip shark", "Silky shark"), 
                                                  selected = "Oceanic whitetip shark"),
-                                     em("NOTE: Hyperparameter's initial values as specified in ",
+                                     em("NOTE: Hyperparameter's default values as specified in ",
                                         a("Shelton et al. (2015)", href = "https://dl.dropboxusercontent.com/u/250971/EB-WP-02-%5BMC_sharks%5D.pdf"))
                         ),
                         mainPanel(
@@ -106,11 +121,11 @@ shinyUI(
                                        column(5,
                                               fluidRow(
                                                 column(6, beta.input("Mono Leader & lip-hooked", "BOP.ML", p.value = 0.33, cv.value = 10)),
-                                                column(6, beta.input("Mono Leader & gut-hooked", "BOP.MG", p.value = 0.33, cv.value = 10))
+                                                column(6, beta.input("Mono Leader & gut-hooked", "BOP.MG", p.value = 0.72, cv.value = 20))
                                               ),
                                               fluidRow(
-                                                column(6, beta.input("Wire Leader & lip-hooked", "BOP.WL", p.value = 0.01, cv.value = 90)),
-                                                column(6, beta.input("Wire Leader & gut-hooked", "BOP.WG", p.value = 0.01, cv.value = 90))
+                                                column(6, beta.input("Wire Leader & lip-hooked", "BOP.WL", p.value = 0.01, cv.value = 10)),
+                                                column(6, beta.input("Wire Leader & gut-hooked", "BOP.WG", p.value = 0.01, cv.value = 10))
                                               )),
                                        br(),
                                        column(7, plotOutput("BOP"))
@@ -167,11 +182,11 @@ shinyUI(
                                        column(5,
                                               fluidRow(
                                                 column(6, beta.input("In-water release & lip-hooked", "URM.WL", p.value = 0.15, cv.value = 25)),
-                                                column(6, beta.input("In-water release & gut-hooked", "URM.WG", p.value = 0.15, cv.value = 25))
+                                                column(6, beta.input("In-water release & gut-hooked", "URM.WG", p.value = 0.19, cv.value = 20))
                                               ),
                                               fluidRow(
-                                                column(6, beta.input("Landed release & lip-hooked", "URM.LL", p.value = 0.19, cv.value = 20)),
-                                                column(6, beta.input("Landed release & gut-hooked", "URM.LG", p.value = 0.19, cv.value = 20))
+                                                column(6, beta.input("Landed release & lip-hooked", "URM.LL", p.value = 0.34, cv.value = 15)),
+                                                column(6, beta.input("Landed release & gut-hooked", "URM.LG", p.value = 0.44, cv.value = 12))
                                               )),
                                               br(),
                                      column(7, plotOutput("URM"))
@@ -181,11 +196,42 @@ shinyUI(
              
              # 2nd Tab ------------------------------------------------------------------    
              
-             tabPanel("Step 2: Choose SON & Mitigation measures",
+             tabPanel("Step 2: Choose management scenario(s)",
                       
-                      fluidRow(column(3, verbatimTextOutput("value1"))),
-                      fluidRow(column(3, verbatimTextOutput("value2")))
+                      h3("Select management scenarios"),
                       
+                      br(),
+                      p("For each management scenario"),
+                      tags$ul(
+                        tags$li("Select one or a combination of options"), 
+                        tags$li("If none of the boxes is selected, the management scenario is not considered")
+                      ),
+                      br(),
+                      hr(),
+                      
+                      fluidRow(
+                        column(3, mng_input("MngScn1", "Management Scenario 1")),
+                        column(3, mng_input("MngScn2", "Management Scenario 2")),
+                        column(3, mng_input("MngScn3", "Management Scenario 3")),
+                        column(3, mng_input("MngScn4", "Management Scenario 4"))
+                        ),
+                      hr(),
+                      
+                      fluidRow(
+                        column(4, numericInput("nsims", label = h3("Number of simulations"), value = 1000)),
+                        column(4,  selectInput("bskSize", label = h3("Basket Size"),
+                                             choices = list("20", "25", "30", "35", "40"), 
+                                             selected = "30"))
+                      ),
+                      br(),
+                      fluidRow(
+                        column(4,  actionButton("simButton", "Run Simulation"))
+                      ),
+                      br(),
+                      fluidRow(
+                        column(6, verbatimTextOutput("value1"))
+                        #column(6, verbatimTextOutput("test2"))
+                        )
                       ),
              
              

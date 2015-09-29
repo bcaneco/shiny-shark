@@ -6,12 +6,20 @@ require(dplyr)
 require(data.table)
 require(reshape2)
 
-source("code/aux_functions.r")
-source("data/MC_Analysis_InputDistributionsHyperpars_FAL&OCS.r")
+# source external Functions
+source("code/shinyAux_functions.r")
+source("code/MC_Analysis_functions.r")
+
+
+# Load data
+source("data/MC_Analysis_InputDistributionsHyperpars_FAL&OCS.r")    # list with default hyper pars values for each species
+load("data/StatQuo_PropGearUseByFlag.robj")     # list with probability of gear use by flag under a given (fixed) status quo
+load("data/EffortByFleet.robj") # effort in hundred hooks by flag
+MngScnMatrix <- read.csv("data/Mngt_Scenarios.csv") # matrix with probability of gear use under all possible management scenarios
+load("C:/Users/Bruno/Dropbox/SPC/Shark MC project/shiny-shark/data/StatQuo_EffbyGearCnfg.robj") # Effort by gear configuration under the status quo
 
 # set theme for ggplot
 theme_set(theme_bw())
-
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -135,9 +143,8 @@ shinyServer(function(input, output, session) {
   # ---- Elements for navPanel "Input Distributions"  ------ #
   # -------------------------------------------------------- #
 
-  output$value3 <- renderPrint({ input$E_shkln})
-  output$value4 <- renderPrint({ input$cv_shkln})
-  
+#   output$value3 <- renderPrint({ input$E_shkln})
+#   output$value4 <- renderPrint({ input$cv_shkln})
   
   # render a plot for input catch model ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   output$cbtyPlot <- renderPlot({
@@ -154,10 +161,8 @@ shinyServer(function(input, output, session) {
   
   # render plots for fate model input components ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  
-  
-  output$value1 <- renderPrint({ input$p_LHP.J})
-  output$value2 <- renderPrint({ input$cv_LHP.J})
+#   output$value1 <- renderPrint({ input$p_LHP.J})
+#   output$value2 <- renderPrint({ input$cv_LHP.J})
   
   # Lip-hook probability 
   output$LHP <- renderPlot({
@@ -213,17 +218,38 @@ shinyServer(function(input, output, session) {
   
   
   
-
-  
-  
-  
-  
   
   # --------------------------------------------------------- #
   # ---- Elements for navPanel "Management Scenarios"  ------ #
   # --------------------------------------------------------- #
   
   
+  
+  simOutputs <- eventReactive(input$simButton, {
+    
+    mng1_effGear <- effGearCnfg_fun(input$MngScn1, StatQuo_PropGearUse, MngScnMatrix, eff_flag)
+    
+    if(is.null(mng1_effGear) == TRUE)
+      NULL 
+    else{
+      SQ_simOutput <- do.evaluation(StatQuo_effGear$effort, input = input, bsktSize = as.numeric(input$bskSize),  nsims = input$nsims)
+      SQ_simCatchMort <- data.frame(t(apply(SQ_simOutput, c(2,3), sum)))
+      SQ_simCatchMort <- mutate(SQ_simCatchMort, Mort_rate = M_total/Catch, Scenario = StatQuo_effGear$mngCode)
+      
+      mng1_simOutput <- do.evaluation(mng1_effGear$effort, input = input, bsktSize = as.numeric(input$bskSize), nsims = input$nsims)
+      mng1_simCatchMort <- data.frame(t(apply(mng1_simOutput, c(2,3), sum)))
+      mng1_simCatchMort <- mutate(mng1_simCatchMort, Mort_rate = M_total/Catch, Scenario = mng1_effGear$mngCode)
+     
+      rbindlist(list(SQ_simCatchMort, mng1_simCatchMort))
+    }
+    
+  })
+  
+  
+  output$value1 <- renderPrint({
+    simOutputs()
+  })
+
   
   
   
@@ -234,20 +260,25 @@ shinyServer(function(input, output, session) {
   # -------------------------------------------------------- #
   
   output$CM_baseVsNoShallow <- renderPlot({
-    print(plot.catchAndMort(filter(MC.fakeData, Scenario %in% c("Base.SQ", "No_Sallow")),
-                                   xlab = 'Number of sharks'))
+#     print(plot.catchAndMort(filter(MC.fakeData, Scenario %in% c("Base.SQ", "No_Sallow")),
+#                                    xlab = 'Number of sharks'))
+    print(plot.catchAndMort(simOutputs(), xlab = 'Number of sharks'))
   })
   
-  output$CM_baseVsNoShkline <- renderPlot({
-    print(plot.catchAndMort(filter(MC.fakeData, Scenario %in% c("Base.SQ", "No_Sharkline")),
-                            xlab = 'Number of sharks'))
-  })
+#   output$CM_baseVsNoShkline <- renderPlot({
+#     print(plot.catchAndMort(filter(MC.fakeData, Scenario %in% c("Base.SQ", "No_Sharkline")),
+#                             xlab = 'Number of sharks'))
+#   })
   
   
   
   # Generate a summary table of results
   output$table <- renderTable({
-    MC.fakeDataSummary
+    
+    group_by(simOutputs(), Scenario) %>% 
+      summarise("10th Perc" = signif(quantile(Mort_rate, 0.1), 2), 
+                "50th Perc" = signif(quantile(Mort_rate, 0.5), 2), 
+                "90th Perc" = signif(quantile(Mort_rate, 0.9), 2))
   })
   
 })

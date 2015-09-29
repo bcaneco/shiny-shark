@@ -3,7 +3,6 @@
 DsctCols <- c("dodgerblue2", "olivedrab3", "firebrick2", "gold2")
 
 
-
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Computing the upper limit of the CV in beta dstns, given the constraint CV < sqrt(1-mean)/mean
 BetaCV_UppLim <- function(chosenP){
@@ -123,12 +122,16 @@ dnsPlot.beta <- function(betaParList, main = ""){
 # plot up the distribution of catch and mortality generated from the MC simulation
 plot.catchAndMort <- function(MCSims, xlab){
   
-  # function's args
+  # ~~~~~~~~~~~~~~~~~
+  # Args
+  #
   # MCSims: simulated values from the chosen SoN scenario
   # xlab: x-axis label
+  # ~~~~~~~~~~~~~~~~~
   
   data2plot <- MCSims %>% select(Catch, M_total, Scenario)
-  names(data2plot) <- c("Total Catch", "Total Mortality", "Scenario")
+  setnames(data2plot, old = c("Catch", "M_total", "Scenario"), new = c("Total Catch", "Total Mortality", "Scenario"))
+  #names(data2plot) <- c("Total Catch", "Total Mortality", "Scenario")
   data2plot <- melt(data2plot, "Scenario")
   
   p <- ggplot(data2plot) + 
@@ -144,3 +147,35 @@ plot.catchAndMort <- function(MCSims, xlab){
   return(p)
   
 }
+
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Calculate effort by gear configuration for a given management scenario
+effGearCnfg_fun <- function(mngScn, SQ_pgu, mngscn_mat, eff){
+  
+  # ~~~~~~~~~~~~~
+  # Args
+  # 
+  # mngScn: character vector from UI specifying the chosen management option(s)
+  # SQ_pgu: list with proportion of gear use by flag under the status quo 
+  # mngscn_mat: matrix with proportion of gear use by flag under all possible management scenarios
+  # eff: effort in number of hooks (hundred) by flag
+  # ~~~~~~~~~~~~~
+  
+  if (is.null(mngScn))
+    return()
+  
+  mngCode <- paste(mngScn, collapse = "_")
+  # Compute proportion of gear use by flag
+  mng_PropGearUse <- apply.opt(SQ_pgu, mngscn_mat, mngCode)
+  # Compute proportion of gear use by gear configuration and flag
+  mng_PropGearCnfg <- sapply(mng_PropGearUse, build.probs)
+  # Compute effort by gear configuration
+  effort <- eff %*% t(mng_PropGearCnfg)
+  
+  return(list(mngCode = mngCode, effort = effort))
+  
+}
+
+

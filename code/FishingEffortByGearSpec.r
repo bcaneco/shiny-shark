@@ -4,7 +4,7 @@
 ##
 ## ~~~~ Calculation of fishing effort in hundreds of hooks
 ## ~~~~ 
-## ~~~~ This code produces data that feeds in the Shiny app and remains unchanged while the apps is runnig
+## ~~~~ This code produces data that feeds in the Shiny app and remains unchanged while the apps is running
 ## ~~~~   Two outputs:
 ## ~~~~     (i) the total effort by flag
 ## ~~~~     (ii) The effort bey gear configuration for a given status-quo, i.e. our best estimate of the current gear specifications.
@@ -41,9 +41,6 @@ mf <- substring(list.files(path="data/cnt_scen/",pattern="*.xlsx"),1,2)
 # Create list object of SON
 cnt_scn <- lapply(as.list(scens),read_excel2)
 names(cnt_scn) <- mf
-# # Read in management options
-# manopt <- read_excel2("data/scenarios.xlsx")
-
 
 
 
@@ -65,30 +62,34 @@ eff2 <- dat %>% group_by(latd, lond, flag_id) %>% summarize(hhooks=sum(hhooks)) 
 eff2 <- eff2 %>% mutate(hhooks=hhooks*ab) %>% select(latd,lond,flag_id,hhooks)
 
 # sum up effective effort by flag 
-eff <- with(eff2,tapply(hhooks,list(flag_id),sum,na.rm=T))
+eff_flag <- with(eff2,tapply(hhooks,list(flag_id),sum,na.rm=T))
 
 
 # Save data
-write.csv(eff, file.path(p2dt, "EffortByFleet.csv"))
+save(eff_flag, file = file.path(p2dt, "EffortByFleet.robj"))
 
 
 
 
 ## STEP 2. Compute effort by gear configuration for a given status quo --------------------------------------------------
 
+# Matrix with proportion of longline gear use by flag a the "base" scenario for the status quo
 StatQuo_descr <- "Base"
-
-# Generate matrix with proportion of longline gear use by flag
-StatQuo <- lapply(cnt_scn, get.son, son=StatQuo_descr)
-
-# Compute matrix with proportion of longline gear use by flag and different gear configuration
-StatQuo_p <- sapply(StatQuo,build.probs)
-
-# Compute effort by gear configuration
-StatQuo_EffbyGear <- eff %*% t(StatQuo_p)
+StatQuo_PropGearUse <- lapply(cnt_scn, get.son, son=StatQuo_descr)
 
 # Save data
-write.csv(StatQuo_EffbyGear, file.path(p2dt, "StatQuo_EffbyGear.csv"))
+save(StatQuo_PropGearUse, file = file.path(p2dt, "StatQuo_PropGearUseByFlag.robj"))
+
+# Compute matrix with proportion of longline gear use by flag and different gear configuration
+StatQuo_PropGearCnfg <- sapply(StatQuo_PropGearUse,build.probs)
+
+# Compute effort by gear configuration (i.e. sum over fleets)
+StatQuo_effort <- eff %*% t(StatQuo_PropGearCnfg)
+StatQuo_effGear <- list(mngCode = "Status_Quo", effort = StatQuo_effort)
+
+
+# Save data
+save(StatQuo_effGear, file = file.path(p2dt, "StatQuo_EffbyGearCnfg.robj"))
 
 
 
@@ -111,44 +112,6 @@ write.csv(StatQuo_EffbyGear, file.path(p2dt, "StatQuo_EffbyGear.csv"))
 
 
 
-# SoN vs Management contrast 1
-son1_descr <- "Base"
-mng1_descr <- "Mono_Circle_No_SH_SHK"
-
-son1 <- lapply(cnt_scn, get.son, son=son1_descr)
-mng1 <- apply.opt(son1, manopt, mng1_descr)
 
 
-# SoN vs Management contrast 2
-son2_descr <- "High_wire"
-mng2_descr <- "No_wire"
-
-son2 <- lapply(cnt_scn, get.son, son=son2_descr)
-mng2 <- apply.opt(son2, manopt, mng2_descr)
-
-
-
-
-## STEP 3. Build flag-based gear-configuration matrices --------------------------------------------------
-
-# Contrast 1
-son1_p <- sapply(son1,build.probs)
-mng1_p <- sapply(mng1,build.probs)
-
-# Contrast 2
-son2_p <- sapply(son2,build.probs)
-mng2_p <- sapply(mng2,build.probs)
-
-
-
-## STEP 4. Compute effort by gear configuration (hundred of hooks)  --------------------------------------------------
-
-# Contrast 1
-son1_inp <- eff %*% t(son1_p)
-mng1_inp <- eff %*% t(mng1_p) 
-
-
-# Contrast 2
-son2_inp <- eff %*% t(son2_p)
-mng2_inp <- eff %*% t(mng2_p)
 

@@ -6,7 +6,6 @@ require(dplyr)
 require(data.table)
 require(reshape2)
 require(RColorBrewer)
-library(shinythemes)
 
 # source external Functions
 source("code/shinyAux_functions.r")
@@ -209,43 +208,53 @@ shinyServer(function(input, output, session) {
     
     # compute the effort by gear configuration under each management scenario and add the status-quo counterpart
     allScen_effGear <- list(
+      sq_effGear = StatQuo_effGear,
       mng1_effGear = effGearCnfg_fun(input$MngScn1, StatQuo_PropGearUse, MngScnMatrix, eff_flag),
       mng2_effGear = effGearCnfg_fun(input$MngScn2, StatQuo_PropGearUse, MngScnMatrix, eff_flag),
       mng3_effGear = effGearCnfg_fun(input$MngScn3, StatQuo_PropGearUse, MngScnMatrix, eff_flag),
-      mng4_effGear = effGearCnfg_fun(input$MngScn4, StatQuo_PropGearUse, MngScnMatrix, eff_flag),
-      sq_effGear = StatQuo_effGear
+      mng4_effGear = effGearCnfg_fun(input$MngScn4, StatQuo_PropGearUse, MngScnMatrix, eff_flag)
       )
     
-    simOutputs <- lapply(allScen_effGear, function(x){
-      if(is.null(x$effort) == TRUE)
-        return()
-      MCsim_out <- do.evaluation(x$effort, input = input)
-      # summing over the gear configurations
-      MCsim_CatchMort <- data.frame(t(apply(MCsim_out, c(2,3), sum)))
-      MCsim_CatchMort <- mutate(MCsim_CatchMort, Mort_rate = M_total/Catch, Scenario = x$mngCode)
-      return(MCsim_CatchMort)
+    withProgress(message = 'Simulating...', value = 0, {
+      nScn <- length(allScen_effGear)
+      simOutputs <- list()
+      for(i in 1:nScn){
+        if(is.null(allScen_effGear[[i]][["effort"]]) == TRUE){
+          simOutputs[[i]] <- NULL
+        }else{
+          # run MC simulation for the current scenario and chosen input distributions
+          MCsim_out <- do.evaluation(allScen_effGear[[i]][["effort"]], input = input)
+          # summing over the gear configurations
+          MCsim_CatchMort <- data.frame(t(apply(MCsim_out, c(2,3), sum)))
+          # Add columns with mortality rate and scenario code and label
+          if(i == 1){ ScnLabel <- "Status Quo" } else {ScnLabel <- paste0("Mngnt Scenario ", i-1) }
+          simOutputs[[i]] <- mutate(MCsim_CatchMort, Mort_rate = M_total/Catch, 
+                                    ScenCode = allScen_effGear[[i]][["mngCode"]],
+                                    Scenario = ScnLabel)
+        }
+        # Increment the progress bar, and update the detail text
+        incProgress(1/nScn, detail = ScnLabel)
+      }
+      rbindlist(simOutputs)
     })
-    rbindlist(simOutputs)
   })
 
   
-  output$value1 <- renderPrint({
-    allScen_MCsims()
-  })
+#   output$value1 <- renderPrint({
+#     allScen_MCsims()
+#   })
 
-  
   
   # -------------------------------------------------------- #
   # ----  Elements for navPanel "Simulation Outputs"  ------ #
   # -------------------------------------------------------- #
   
-  
   # Generate MC distribution plots
   output$MCplots_catchMort <- renderPlot({
-     print(plot.catchAndMort(allScen_MCsims(), xlab = 'Number of sharks', main = input$spp))
+    print(plot.catchAndMort(allScen_MCsims(), xlab = 'Number of sharks', main = input$spp))
   })
   
-
+  
   output$MCplots_MortRate <- renderPlot({
     print(plot.MortRate(allScen_MCsims(), xlab = 'Mortality rate', main = input$spp))
   })

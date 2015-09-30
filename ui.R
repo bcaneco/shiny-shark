@@ -1,3 +1,5 @@
+require(shiny)
+require(shinythemes)
 
 
 # Define input widget for lognormal distribution
@@ -69,7 +71,7 @@ shinyUI(
                           br(),
                           h3("Specify the input distributions"),
                           br(),
-                          p("<Some text here>"),
+                          #p("<Some text here>"),
                           br(),
                           tabsetPanel(
                             tabPanel(h4("Catch Component"),
@@ -229,9 +231,9 @@ shinyUI(
                           fluidRow(
                             column(4,  actionButton("simButton", h4("Run Simulation")))
                           ),
-                          #                           fluidRow(
-                          #                             column(6, verbatimTextOutput("value1"))
-                          #                           )
+#                           fluidRow(
+#                             column(6, verbatimTextOutput("value1"))
+#                           ),
                           br(),
                           br(),
                           br(),

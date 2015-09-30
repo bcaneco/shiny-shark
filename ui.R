@@ -71,7 +71,7 @@ shinyUI(
                           br(),
                           h3("Specify the input distributions"),
                           br(),
-                          #p("<Some text here>"),
+                          p("<Some text here (explaining the two components of the simulation model?)>"),
                           br(),
                           tabsetPanel(
                             tabPanel(h4("Catch Component"),
@@ -229,7 +229,7 @@ shinyUI(
                           ),
                           br(),
                           fluidRow(
-                            column(4,  actionButton("simButton", h4("Run Simulation")))
+                            column(5, actionButton("simButton", h4("Run Simulation")))
                           ),
 #                           fluidRow(
 #                             column(6, verbatimTextOutput("value1"))
@@ -239,7 +239,6 @@ shinyUI(
                           br(),
                           tabsetPanel(
                             tabPanel(h4("Catch and mortality"),
-                                     br(),
                                      br(),
                                      h5("Monte Carlo distributions of catch and mortality under each scenario"),
                                      fluidRow(column(8, plotOutput("MCplots_catchMort", height = "550px"), offset = 2)),
@@ -253,7 +252,6 @@ shinyUI(
                             ),
                             tabPanel(h4("Mortality rate"),
                                      br(),
-                                     br(),
                                      h5("Monte Carlo distributions of mortality rate (i.e. deaths/catch) under each scenario"),
                                      fluidRow(column(6, plotOutput("MCplots_MortRate", height = "550px"), offset = 3)),
                                      br(),
@@ -264,7 +262,6 @@ shinyUI(
                                      fluidRow(column(8, tableOutput("tab_summMortRate"), offset = 3))
                             ),
                             tabPanel(h4("Mortality components"),
-                                     br(),
                                      br(),
                                      h5("Median of Monte Carlo distributions of mortality components under each scenario"),
                                      fluidRow(column(10, plotOutput("MCplots_MedianMortElem", height = "500px"), offset = 1))

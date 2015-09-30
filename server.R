@@ -6,6 +6,7 @@ require(dplyr)
 require(data.table)
 require(reshape2)
 require(RColorBrewer)
+library(shinythemes)
 
 # source external Functions
 source("code/shinyAux_functions.r")
@@ -238,6 +239,8 @@ shinyServer(function(input, output, session) {
   # ----  Elements for navPanel "Simulation Outputs"  ------ #
   # -------------------------------------------------------- #
   
+  
+  # Generate MC distribution plots
   output$MCplots_catchMort <- renderPlot({
      print(plot.catchAndMort(allScen_MCsims(), xlab = 'Number of sharks', main = input$spp))
   })
@@ -253,14 +256,30 @@ shinyServer(function(input, output, session) {
   })
   
   
+  
   # Generate a summary table of results
-  output$table <- renderTable({
-    
+  output$tab_summCatch <- renderTable({
     group_by(allScen_MCsims(), Scenario) %>% 
-      summarise("10th Perc" = signif(quantile(Mort_rate, 0.1), 2), 
-                "50th Perc" = signif(quantile(Mort_rate, 0.5), 2), 
-                "90th Perc" = signif(quantile(Mort_rate, 0.9), 2))
+      summarise("10th Percentile" = signif(quantile(Catch, 0.1)), 
+                "50th Percentile" = signif(quantile(Catch, 0.5)), 
+                "90th Percentile" = signif(quantile(Catch, 0.9)))
   })
+  
+  output$tab_summMort <- renderTable({
+    group_by(allScen_MCsims(), Scenario) %>% 
+      summarise("10th Percentile" = signif(quantile(M_total, 0.1)), 
+                "50th Percentile" = signif(quantile(M_total, 0.5)), 
+                "90th Percentile" = signif(quantile(M_total, 0.9)))
+  })
+  
+  output$tab_summMortRate <- renderTable({
+    group_by(allScen_MCsims(), Scenario) %>% 
+      summarise("10th Percentile" = signif(quantile(Mort_rate, 0.1), 2), 
+                "50th Percentile" = signif(quantile(Mort_rate, 0.5), 2), 
+                "90th Percentile" = signif(quantile(Mort_rate, 0.9), 2))
+  })
+  
+
   
 })
 

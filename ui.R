@@ -1,4 +1,3 @@
-library(shiny)
 
 
 # Define input widget for lognormal distribution
@@ -26,12 +25,13 @@ beta.input <- function(title, suffix, p.value, cv.value){
 
 # Define input widget for management options
 mng_input <- function(id, title){
-  wellPanel(
+#  wellPanel(
+    #style = "padding: 5px;",
     checkboxGroupInput(id, label = h4(title),
                        choices = list("Ban Shark lines" = "NoShkln", "Ban wire trace" = "NoWire", 
                                       "Ban shallow hooks" = "NoShallow", "Restrict to Circle-hooks only" = "AllCircle"),
                        selected = NULL, inline = FALSE)
-  )
+ # )
 }
 
 
@@ -42,14 +42,14 @@ mng_input <- function(id, title){
 shinyUI(
 
   navbarPage("Impact of longlining in sharks: simulation of mitigation measures",
-             
+             theme = shinytheme("flatly"),
              
              # 1st Tab ------------------------------------------------------------------    
              
              tabPanel("Step 1: Choose species & input distributions",
                       
                       tags$style(type="text/css",
-                                 "label {font-size: 12px;}",
+                                 "label {font-size: 13px;}",
                                  ".recalculating {opacity: 1.0;}"
                       ),
                       
@@ -58,7 +58,7 @@ shinyUI(
                        ),
                       
                       sidebarLayout(
-                        sidebarPanel(width = 2,
+                        sidebarPanel(width = 3,
                                      selectInput("spp", label = h3("Choose species"), 
                                                  choices = list("Oceanic whitetip shark", "Silky shark"), 
                                                  selected = "Oceanic whitetip shark"),
@@ -72,7 +72,7 @@ shinyUI(
                           p("<Some text here>"),
                           br(),
                           tabsetPanel(
-                            tabPanel("Catch Component",
+                            tabPanel(h4("Catch Component"),
                                      h4("Catch Rate per 100 hooks in:"),
                                      br(),
                                      fluidRow(
@@ -92,7 +92,7 @@ shinyUI(
                                      #fluidRow(column(3, verbatimTextOutput("value4"))),
                                      ),
                             
-                            tabPanel("Fate Component",
+                            tabPanel(h4("Fate Component"),
                                      
                                      br(),
                                      p(em("NOTE: The upper limit of the CV for probability inputs are defined by the Beta distn constraint: 
@@ -196,79 +196,116 @@ shinyUI(
              
              # 2nd Tab ------------------------------------------------------------------    
              
-             tabPanel("Step 2: Choose management scenario(s)",
+             tabPanel("Step 2: Choose management scenarios & Run MC simulation",
                       
-                      h3("Select management scenarios"),
-                      
-                      br(),
-                      p("Within each management scenario frame:"),
-                      tags$ul(
-                        tags$li("Select one or a combination of options"), 
-                        tags$li("If none of the boxes is selected, the management scenario is not considered")
-                      ),
-                      br(),
-                      hr(),
-                      
-                      fluidRow(
-                        column(3, mng_input("MngScn1", "Management Scenario 1")),
-                        column(3, mng_input("MngScn2", "Management Scenario 2")),
-                        column(3, mng_input("MngScn3", "Management Scenario 3")),
-                        column(3, mng_input("MngScn4", "Management Scenario 4"))
+                      sidebarLayout(
+                        
+                        sidebarPanel(width = 3,
+                          h3("Management scenarios"),
+                          br(),
+                          p("Within each management scenario frame:"),
+                          tags$ul(
+                            tags$li("Select one or a combination of options"), 
+                            tags$li("If none of the boxes is selected, the management scenario is not considered")
+                          ),
+                          br(),
+                          mng_input("MngScn1", "Management Scenario 1"),
+                          hr(),
+                          mng_input("MngScn2", "Management Scenario 2"),
+                          hr(),
+                          mng_input("MngScn3", "Management Scenario 3"),
+                          hr(),
+                          mng_input("MngScn4", "Management Scenario 4")
+
                         ),
-                      hr(),
-                      
-                      fluidRow(
-                        column(4, numericInput("nsims", label = h3("Number of simulations"), value = 1000)),
-                        column(4,  selectInput("bskSize", label = h3("Basket Size"),
-                                             choices = list("20", "25", "30", "35", "40"), 
-                                             selected = "30"))
-                      ),
-                      br(),
-                      fluidRow(
-                        column(4,  actionButton("simButton", "Run Simulation"))
-                      ),
-                      br(),
-                      fluidRow(
-                        column(6, verbatimTextOutput("value1"))
-                        )
-                      ),
+                        mainPanel(
+                          fluidRow(
+                            column(3, numericInput("nsims", label = h4("Number of simulations"), value = 1000)),
+                            column(3,  selectInput("bskSize", label = h4("Basket Size"),
+                                                   choices = list("20", "25", "30", "35", "40"), 
+                                                   selected = "30"))
+                          ),
+                          br(),
+                          fluidRow(
+                            column(4,  actionButton("simButton", h4("Run Simulation")))
+                          ),
+                          #                           fluidRow(
+                          #                             column(6, verbatimTextOutput("value1"))
+                          #                           )
+                          br(),
+                          br(),
+                          br(),
+                          tabsetPanel(
+                            tabPanel(h4("Catch and mortality"),
+                                     br(),
+                                     br(),
+                                     h5("Monte Carlo distributions of catch and mortality under each scenario"),
+                                     fluidRow(column(8, plotOutput("MCplots_catchMort", height = "550px"), offset = 2)),
+                                     br(),
+                                     br(),
+                                     hr(),
+                                     h5("Monte Carlo percentiles"),
+                                     br(),
+                                     fluidRow(column(8, p("Total Catch"), tableOutput("tab_summCatch"))), 
+                                     fluidRow(column(8, p("Mortality"), tableOutput("tab_summMort")))
+                            ),
+                            tabPanel(h4("Mortality rate"),
+                                     br(),
+                                     br(),
+                                     h5("Monte Carlo distributions of mortality rate (i.e. deaths/catch) under each scenario"),
+                                     fluidRow(column(6, plotOutput("MCplots_MortRate", height = "550px"), offset = 3)),
+                                     br(),
+                                     br(),
+                                     hr(),
+                                     h5("Monte Carlo percentiles"),
+                                     br(),
+                                     fluidRow(column(8, tableOutput("tab_summMortRate"), offset = 3))
+                            ),
+                            tabPanel(h4("Mortality components"),
+                                     br(),
+                                     br(),
+                                     h5("Median of Monte Carlo distributions of mortality components under each scenario"),
+                                     fluidRow(column(10, plotOutput("MCplots_MedianMortElem", height = "500px"), offset = 1))
+                              
+                            ))
+                          )))
              
              
              
              
-             # 3nd Tab ------------------------------------------------------------------    
-             
-             tabPanel("Step 3: Run simulation & Outputs",
-                      tabsetPanel(
-                        tabPanel("Contrast Plots",
-                                 h4("Monte Carlo distributions of catch and mortality under each scenario"),
-                                 fluidRow(column(6, plotOutput("MCplots_catchMort", height = "650px"), offset = 2)),
-                                 br(),
-                                 
-                                 hr(),
-                                 br(),
-                                 h4("Monte Carlo distributions of mortality rate (i.e. deaths/catch) under each scenario"),
-                                 fluidRow(
-                                   column(5, plotOutput("MCplots_MortRate", height = "650px"), offset = 2)
-#                                    column(4, 
-#                                           br(), br(), br(), br(),
-#                                           tableOutput("table"))
-                                   ),
-                                 
-                                 hr(),
-                                 br(),
-                                 h4("Median of Monte Carlo distributions of mortality components under each scenario"),
-                                 fluidRow(column(8, plotOutput("MCplots_MedianMortElem", height = "650px"), offset = 2))
-                                 
-                                 ),
-                        
-                        
-                        tabPanel("Contrast summary tables",
-                                 
-                                 h4("Overall mortality rate (i.e. deaths/catch)"),
-                                 tableOutput("table")
-                                 )
-                      ))
+#              # 3nd Tab ------------------------------------------------------------------    
+#              
+#              tabPanel("Step 3: Run simulation & Outputs",
+#                       tabsetPanel(
+#                         tabPanel("Contrast Plots",
+#                                  h4("Monte Carlo distributions of catch and mortality under each scenario"),
+#                                  fluidRow(column(6, plotOutput("MCplots_catchMort", height = "650px"), offset = 2)),
+#                                  br(),
+#                                  
+#                                  hr(),
+#                                  br(),
+#                                  h4("Monte Carlo distributions of mortality rate (i.e. deaths/catch) under each scenario"),
+#                                  fluidRow(
+#                                    column(5, plotOutput("MCplots_MortRate", height = "650px"), offset = 2)
+# #                                    column(4, 
+# #                                           br(), br(), br(), br(),
+# #                                           tableOutput("table"))
+#                                    ),
+#                                  
+#                                  hr(),
+#                                  br(),
+#                                  h4("Median of Monte Carlo distributions of mortality components under each scenario"),
+#                                  fluidRow(column(8, plotOutput("MCplots_MedianMortElem", height = "650px"), offset = 2))
+#                                  
+#                                  ),
+#                         
+#                         
+#                         tabPanel("Contrast summary tables",
+#                                  
+#                                  h4("Overall mortality rate (i.e. deaths/catch)"),
+#                                  tableOutput("table")
+#                                  )
+#                       ))
              
   ))
 

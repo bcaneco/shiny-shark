@@ -217,8 +217,6 @@ plot.MortElements <- function(MCSims, main){
 
 
 
-
-
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Calculate effort by gear configuration for a given management scenario
 effGearCnfg_fun <- function(mngScn, SQ_pgu, mngscn_mat, eff){
@@ -246,5 +244,10 @@ effGearCnfg_fun <- function(mngScn, SQ_pgu, mngscn_mat, eff){
   return(list(mngCode = mngCode, effort = effort))
   
 }
+
+
+
+
+
 
 

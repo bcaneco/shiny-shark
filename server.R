@@ -5,6 +5,7 @@ require(ggplot2)
 require(dplyr)
 require(data.table)
 require(reshape2)
+require(RColorBrewer)
 
 # source external Functions
 source("code/shinyAux_functions.r")
@@ -20,27 +21,6 @@ load("C:/Users/Bruno/Dropbox/SPC/Shark MC project/shiny-shark/data/StatQuo_Effby
 
 # set theme for ggplot
 theme_set(theme_bw())
-
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Fake MC outputs for place holding results
-MC.fakeData <- data.frame(
-  Scenario = c(rep("Base.SQ", 1000), rep("No_Sharkline", 1000), rep("No_wire", 1000), rep("Only_Circle", 1000), rep("No_Sallow", 1000)),
-  Catch = c(rpois(1000, 70000), rpois(1000, 65000), rpois(1000, 50000), rpois(1000, 55000), rpois(1000, 60000)),
-  M_total = c(rpois(1000, 50000), rpois(1000, 40000), rpois(1000, 30000), rpois(1000, 35000), rpois(1000, 45000))
-)
-
-MC.fakeData <- mutate(MC.fakeData, M_ret_gut = M_total * 0.2,  M_ret_lip = M_total * 0.15, 
-                      M_water_lip = M_total * 0.1, M_water_gut = M_total * 0.05,
-                      M_Boff_lip = M_total * 0.15, M_Boff_gut = M_total * 0.1,
-                      M_boat_lip = M_total * 0.1, M_boat_gut = M_total * 0.15,
-                      Mort_rate = M_total/Catch)
-
-MC.fakeDataSummary <- group_by(MC.fakeData, Scenario) %>% summarise("10th Perc" = signif(quantile(Mort_rate, 0.1), 2), 
-                                              "50th Perc" = signif(quantile(Mort_rate, 0.5), 2), 
-                                              "90th Perc" = signif(quantile(Mort_rate, 0.1), 2))
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 
@@ -224,58 +204,59 @@ shinyServer(function(input, output, session) {
   # --------------------------------------------------------- #
   
   
-  
-  simOutputs <- eventReactive(input$simButton, {
+  allScen_MCsims <- eventReactive(input$simButton, {
     
-    mng1_effGear <- effGearCnfg_fun(input$MngScn1, StatQuo_PropGearUse, MngScnMatrix, eff_flag)
+    # compute the effort by gear configuration under each management scenario and add the status-quo counterpart
+    allScen_effGear <- list(
+      mng1_effGear = effGearCnfg_fun(input$MngScn1, StatQuo_PropGearUse, MngScnMatrix, eff_flag),
+      mng2_effGear = effGearCnfg_fun(input$MngScn2, StatQuo_PropGearUse, MngScnMatrix, eff_flag),
+      mng3_effGear = effGearCnfg_fun(input$MngScn3, StatQuo_PropGearUse, MngScnMatrix, eff_flag),
+      mng4_effGear = effGearCnfg_fun(input$MngScn4, StatQuo_PropGearUse, MngScnMatrix, eff_flag),
+      sq_effGear = StatQuo_effGear
+      )
     
-    if(is.null(mng1_effGear) == TRUE)
-      NULL 
-    else{
-      SQ_simOutput <- do.evaluation(StatQuo_effGear$effort, input = input, bsktSize = as.numeric(input$bskSize),  nsims = input$nsims)
-      SQ_simCatchMort <- data.frame(t(apply(SQ_simOutput, c(2,3), sum)))
-      SQ_simCatchMort <- mutate(SQ_simCatchMort, Mort_rate = M_total/Catch, Scenario = StatQuo_effGear$mngCode)
-      
-      mng1_simOutput <- do.evaluation(mng1_effGear$effort, input = input, bsktSize = as.numeric(input$bskSize), nsims = input$nsims)
-      mng1_simCatchMort <- data.frame(t(apply(mng1_simOutput, c(2,3), sum)))
-      mng1_simCatchMort <- mutate(mng1_simCatchMort, Mort_rate = M_total/Catch, Scenario = mng1_effGear$mngCode)
-     
-      rbindlist(list(SQ_simCatchMort, mng1_simCatchMort))
-    }
-    
-  })
-  
-  
-  output$value1 <- renderPrint({
-    simOutputs()
+    simOutputs <- lapply(allScen_effGear, function(x){
+      if(is.null(x$effort) == TRUE)
+        return()
+      MCsim_out <- do.evaluation(x$effort, input = input)
+      # summing over the gear configurations
+      MCsim_CatchMort <- data.frame(t(apply(MCsim_out, c(2,3), sum)))
+      MCsim_CatchMort <- mutate(MCsim_CatchMort, Mort_rate = M_total/Catch, Scenario = x$mngCode)
+      return(MCsim_CatchMort)
+    })
+    rbindlist(simOutputs)
   })
 
   
-  
-  
+  output$value1 <- renderPrint({
+    allScen_MCsims()
+  })
+
   
   
   # -------------------------------------------------------- #
   # ----  Elements for navPanel "Simulation Outputs"  ------ #
   # -------------------------------------------------------- #
   
-  output$CM_baseVsNoShallow <- renderPlot({
-#     print(plot.catchAndMort(filter(MC.fakeData, Scenario %in% c("Base.SQ", "No_Sallow")),
-#                                    xlab = 'Number of sharks'))
-    print(plot.catchAndMort(simOutputs(), xlab = 'Number of sharks'))
+  output$MCplots_catchMort <- renderPlot({
+     print(plot.catchAndMort(allScen_MCsims(), xlab = 'Number of sharks', main = input$spp))
   })
   
-#   output$CM_baseVsNoShkline <- renderPlot({
-#     print(plot.catchAndMort(filter(MC.fakeData, Scenario %in% c("Base.SQ", "No_Sharkline")),
-#                             xlab = 'Number of sharks'))
-#   })
+
+  output$MCplots_MortRate <- renderPlot({
+    print(plot.MortRate(allScen_MCsims(), xlab = 'Mortality rate', main = input$spp))
+  })
   
+  
+  output$MCplots_MedianMortElem <- renderPlot({
+    print(plot.MortElements(allScen_MCsims(), main = input$spp))
+  })
   
   
   # Generate a summary table of results
   output$table <- renderTable({
     
-    group_by(simOutputs(), Scenario) %>% 
+    group_by(allScen_MCsims(), Scenario) %>% 
       summarise("10th Perc" = signif(quantile(Mort_rate, 0.1), 2), 
                 "50th Perc" = signif(quantile(Mort_rate, 0.5), 2), 
                 "90th Perc" = signif(quantile(Mort_rate, 0.9), 2))

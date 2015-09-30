@@ -1,6 +1,6 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Colours for plots
-DsctCols <- c("dodgerblue2", "olivedrab3", "firebrick2", "gold2")
+DsctCols <- c("dodgerblue2", "olivedrab3", "firebrick2", "gold2", "purple")
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -119,8 +119,39 @@ dnsPlot.beta <- function(betaParList, main = ""){
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# plot up the distribution of catch and mortality generated from the MC simulation
-plot.catchAndMort <- function(MCSims, xlab){
+# plot the MC distribution of catch and mortality under each scenario
+plot.catchAndMort <- function(MCSims, xlab, main){
+  
+  # ~~~~~~~~~~~~~~~~~
+  # Args
+  #
+  # MCSims: simulated values from the chosen SoN scenario
+  # xlab: x-axis label
+  # main: Plot title
+  # ~~~~~~~~~~~~~~~~~
+  
+  data2plot <- MCSims %>% select(Catch, M_total, Scenario)
+  setnames(data2plot, old = c("Catch", "M_total", "Scenario"), new = c("Total Catch", "Total Mortality", "Scenario"))
+  data2plot <- melt(data2plot, "Scenario")
+  
+  p <- ggplot(data2plot) + 
+    geom_density(aes(x = value, fill = factor(Scenario), col = factor(Scenario)), position = "dodge", alpha = 0.5) +
+    #geom_histogram(aes(x = value, fill = factor(Scenario), col = factor(Scenario)), position = "dodge", alpha = 0.5) +
+    guides(fill=guide_legend(title=NULL), col=guide_legend(title=NULL)) +
+    labs(y = "Density", x = xlab, title = main) +
+    theme(legend.position="none") +
+    scale_colour_brewer(palette="Dark2") +
+    scale_fill_brewer(palette="Dark2") +
+    facet_grid(Scenario~variable)
+  return(p)
+  
+}
+
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# plot the MC distributions of mortality rate under each scenario
+plot.MortRate <- function(MCSims, xlab, main){
   
   # ~~~~~~~~~~~~~~~~~
   # Args
@@ -129,24 +160,62 @@ plot.catchAndMort <- function(MCSims, xlab){
   # xlab: x-axis label
   # ~~~~~~~~~~~~~~~~~
   
-  data2plot <- MCSims %>% select(Catch, M_total, Scenario)
-  setnames(data2plot, old = c("Catch", "M_total", "Scenario"), new = c("Total Catch", "Total Mortality", "Scenario"))
-  #names(data2plot) <- c("Total Catch", "Total Mortality", "Scenario")
+  data2plot <- MCSims %>% select(Mort_rate,  Scenario)
+  setnames(data2plot, old = c("Mort_rate", "Scenario"), new = c("Mortality rate", "Scenario"))
   data2plot <- melt(data2plot, "Scenario")
   
   p <- ggplot(data2plot) + 
-    geom_density(aes(x = value, fill = factor(Scenario), col = factor(Scenario)), position = "dodge", alpha = 0.5) +
+    #geom_density(aes(x = value, fill = factor(Scenario), col = factor(Scenario)), position = "dodge", alpha = 0.5) +
+    geom_histogram(aes(x = value, fill = factor(Scenario), col = factor(Scenario)), position = "dodge", alpha = 0.5, 
+                   binwidth = diff(range(data2plot$value))/30) +
     guides(fill=guide_legend(title=NULL), col=guide_legend(title=NULL)) +
-    labs(y = "Density", x = xlab) +
-    theme(legend.position="top") +
-    scale_colour_manual(values = DsctCols) +
-    scale_fill_manual(values = DsctCols) +
-    #facet_grid(variable~.) 
-    #facet_grid(Scenario~variable) 
-    facet_wrap(~variable) 
+    labs(x = xlab, title = main) +
+    scale_colour_brewer(palette="Dark2") +
+    scale_fill_brewer(palette="Dark2") +
+    theme(legend.position="none") +
+    facet_grid(Scenario ~ .)
+    
   return(p)
   
 }
+
+
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# plot the median of MC distributions of mortality components
+plot.MortElements <- function(MCSims, main){
+  
+  # ~~~~~~~~~~~~~~~~~
+  # Args
+  #
+  # MCSims: simulated values from the chosen SoN scenario
+  # xlab: x-axis label
+  # ~~~~~~~~~~~~~~~~~
+  
+  subdata <- MCSims %>% select(M_Boff_lip, M_Boff_gut, M_ret_lip, M_ret_gut, M_water_lip, M_water_gut, M_boat_lip, M_boat_gut, Scenario)
+  subdata <- subdata %>% group_by(Scenario) %>% 
+    summarise(M_Boff_lip = median(M_Boff_lip), M_Boff_gut = median(M_Boff_gut), M_ret_lip = median(M_ret_lip), 
+              M_ret_gut = median(M_ret_gut), M_water_lip = median(M_water_lip), M_water_gut = median(M_water_gut), 
+              M_boat_lip = median(M_boat_lip), M_boat_gut = median(M_boat_gut))
+  
+  data2plot <- melt(subdata, "Scenario")
+  
+  p <- ggplot(data2plot) + 
+    geom_bar(aes(x = Scenario, y = value, fill = variable), stat = "identity") + 
+    #guides(fill=guide_legend(title=NULL), col=guide_legend(title=NULL)) +
+    labs(y = "Mortality (Number of sharks)", x = NULL, title = main) +
+    scale_colour_brewer(palette="Set2") +
+    scale_fill_brewer(palette="Set2") +
+    coord_flip()
+  
+  return(p)
+  
+}
+
+
+
+
 
 
 

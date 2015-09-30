@@ -201,7 +201,7 @@ shinyUI(
                       h3("Select management scenarios"),
                       
                       br(),
-                      p("For each management scenario"),
+                      p("Within each management scenario frame:"),
                       tags$ul(
                         tags$li("Select one or a combination of options"), 
                         tags$li("If none of the boxes is selected, the management scenario is not considered")
@@ -230,7 +230,6 @@ shinyUI(
                       br(),
                       fluidRow(
                         column(6, verbatimTextOutput("value1"))
-                        #column(6, verbatimTextOutput("test2"))
                         )
                       ),
              
@@ -242,14 +241,33 @@ shinyUI(
              tabPanel("Step 3: Run simulation & Outputs",
                       tabsetPanel(
                         tabPanel("Contrast Plots",
-                                 fluidRow(column(5, plotOutput("CM_baseVsNoShallow"), offset = 1),
-                                          column(5, plotOutput("CM_baseVsNoShkline"))
-                                          )),
+                                 h4("Monte Carlo distributions of catch and mortality under each scenario"),
+                                 fluidRow(column(6, plotOutput("MCplots_catchMort", height = "650px"), offset = 2)),
+                                 br(),
+                                 
+                                 hr(),
+                                 br(),
+                                 h4("Monte Carlo distributions of mortality rate (i.e. deaths/catch) under each scenario"),
+                                 fluidRow(
+                                   column(5, plotOutput("MCplots_MortRate", height = "650px"), offset = 2)
+#                                    column(4, 
+#                                           br(), br(), br(), br(),
+#                                           tableOutput("table"))
+                                   ),
+                                 
+                                 hr(),
+                                 br(),
+                                 h4("Median of Monte Carlo distributions of mortality components under each scenario"),
+                                 fluidRow(column(8, plotOutput("MCplots_MedianMortElem", height = "650px"), offset = 2))
+                                 
+                                 ),
+                        
                         
                         tabPanel("Contrast summary tables",
                                  
-                                 h4("Overall mortality rate (deaths/catch)"),
-                                 tableOutput("table"))
+                                 h4("Overall mortality rate (i.e. deaths/catch)"),
+                                 tableOutput("table")
+                                 )
                       ))
              
   ))

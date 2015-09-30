@@ -99,8 +99,11 @@ effortPerHookCateg <- function(hhooks, SHK, bsktSize){
 
 
 
-do.evaluation <- function(eff, input, bsktSize, nsims)
+do.evaluation <- function(eff, input)
 {
+  
+  bsktSize <- as.numeric(input$bskSize)
+  nsims <- input$nsims
   
   # Read-in hyperparameters and generate random sample of each input distribution
   # cbty - catchability
@@ -259,11 +262,6 @@ do.evaluation <- function(eff, input, bsktSize, nsims)
 
 
 
-
-
-
-
-##############################          DMP FUNCTIONS       ##########################################
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

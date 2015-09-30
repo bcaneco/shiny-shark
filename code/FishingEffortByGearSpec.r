@@ -7,7 +7,7 @@
 ## ~~~~ This code produces data that feeds in the Shiny app and remains unchanged while the apps is running
 ## ~~~~   Two outputs:
 ## ~~~~     (i) the total effort by flag
-## ~~~~     (ii) The effort bey gear configuration for a given status-quo, i.e. our best estimate of the current gear specifications.
+## ~~~~     (ii) The effort by gear configuration for a given status-quo, i.e. our best estimate of the current gear specifications.
 ##
 ##
 ## ~~~~ NOTE: the process applied here is outdated. We need the latest version of the method used to estimate the effort spatial surface (with the associated relative abundance surface estimation)
@@ -84,7 +84,7 @@ save(StatQuo_PropGearUse, file = file.path(p2dt, "StatQuo_PropGearUseByFlag.robj
 StatQuo_PropGearCnfg <- sapply(StatQuo_PropGearUse,build.probs)
 
 # Compute effort by gear configuration (i.e. sum over fleets)
-StatQuo_effort <- eff %*% t(StatQuo_PropGearCnfg)
+StatQuo_effort <- eff_flag %*% t(StatQuo_PropGearCnfg)
 StatQuo_effGear <- list(mngCode = "Status_Quo", effort = StatQuo_effort)
 
 

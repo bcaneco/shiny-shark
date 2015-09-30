@@ -1,6 +1,10 @@
 library(shiny)
 
 
+
+#  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#  Testing updating the value of slidebar based on choice of species
+
 beta.input <- function(title, suffix, p.value, cv.value){
   wellPanel(
     style = "padding: 5px;",
@@ -68,8 +72,8 @@ inputsHyperPars$OCS$lhk$c$n_c
 
 
 
-
-
+#  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#  Testing updating the value of slidebar based on choice of species
 
 p <- 1
 n <- 0.001
@@ -157,13 +161,19 @@ cbtyPlots
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#  Developing the interactions with the choice of management scenarios
 
 library(shiny)
 
 
-
 MngScnMatrix <- read.csv("C:/Users/Bruno/Dropbox/SPC/Shark MC project/shiny-shark/data/Mngt_Scenarios.csv")
+load("C:/Users/Bruno/Dropbox/SPC/Shark MC project/shiny-shark/data/EffortByFleet.robj")
+load("C:/Users/Bruno/Dropbox/SPC/Shark MC project/shiny-shark/data/StatQuo_PropGearUseByFlag.robj") ; StatQuo_PropGearUse
+load("C:/Users/Bruno/Dropbox/SPC/Shark MC project/shiny-shark/data/StatQuo_EffbyGearCnfg.robj")
 
+
+source("C:/Users/Bruno/Dropbox/SPC/Shark MC project/shiny-shark/code/MC_Analysis_functions.r")
+source("C:/Users/Bruno/Dropbox/SPC/Shark MC project/shiny-shark/code/shinyAux_functions.r")
 
 mng_input <- function(id, title){
   wellPanel(
@@ -174,46 +184,116 @@ mng_input <- function(id, title){
   )
 }
 
+
+# Define input widget for beta distribution
+beta.input <- function(title, suffix, p.value, cv.value){
+  wellPanel(
+    style = "padding: 5px;",
+    h5(title),
+    sliderInput(paste0("p_", suffix), "Expected probability:", min = 0, max = 1, step = 0.05, value = p.value, ticks = FALSE),
+    sliderInput(paste0("cv_", suffix), "Coef. variation (%):", min = 0, max = 100, step = 5, value = cv.value, ticks = FALSE)
+  )
+}
+
+
+
 shinyApp(
   ui = fluidPage(
     sidebarLayout(
       sidebarPanel(
       ),
       mainPanel(
-        fluidRow(column(3, mng_input("MngScn1", "Management Scenario 1"))),
+        fluidRow(column(4, mng_input("MngScn1", "Management Scenario 1")),
+                 column(4, mng_input("MngScn2", "Management Scenario 2"))),
         
-        verbatimTextOutput("out"),
+        verbatimTextOutput("choice"),
         
-        verbatimTextOutput("choice")
+        hr(),
+        fluidRow(column(6, beta.input("J-Hook", "LHP.J", p.value = 0.3, cv.value = 43))),
+        
+        br(),
+        actionButton("button", "An action button"),
+        br(),
+        hr(),
+        verbatimTextOutput("beta_rand")
+        
       ))),
   
   server = function(input, output, session) {
     
-    output$out <- renderPrint({
-      paste(input$MngScn1, collapse = "_")
+    output$choice <- renderPrint({
+      
+      out <- list(
+        sq_effGear = StatQuo_effGear,
+        mng1_effGear = effGearCnfg_fun(input$MngScn1, StatQuo_PropGearUse, MngScnMatrix, eff_flag),
+        mng2_effGear = effGearCnfg_fun(input$MngScn2, StatQuo_PropGearUse, MngScnMatrix, eff_flag))
+      
+      out
+    
     })
     
-    output$choice <- renderPrint({
-      MngScnCode <- 
-      filter(MngScnMatrix, Opts_Combn == MngScnCode)
-       })
+    randomVals <- eventReactive(input$button, {
+      test(10, input = input)
+    })
+    
+    output$beta_rand <- renderPrint({
+      randomVals()
+    })
     
   }
 )
 
 
 
-userChoice <- c("NoShkln")
-MngScnCode <- paste(userChoice, collapse = "_")
-filter(MngScnMatrix, Opts_Combn == MngScnCode)
+
+sum(c(StatQuo_effGear$effort))
+t(StatQuo_effGear$effort)
+sum(t(effGearCnfg_fun("NoShkln", StatQuo_PropGearUse, MngScnMatrix, eff_flag)$effort))
+
+x1 <- apply.opt(StatQuo_PropGearUse, MngScnMatrix, "NoShkln")
+x2 <- sapply(x1,build.probs)
+x3 <- eff_flag %*% t(x2) 
+sum(x3)
+
+
+test <- function(n, input){
+  rbeta_rptzd(n, input$p_LHP.J, input$cv_LHP.J)
+}
+
+
+
+
+#
+rlnorm_rptzd(10, 2, 0)
+
+rbeta_rptzd(20, 0.1, 0)
 
 
 
 
 
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#  Testing plotting functions for MC outputs
 
 
+MC.fakeData <- data.frame(
+  Scenario = c(rep("Base.SQ", 1000), rep("No_Sharkline", 1000), rep("No_wire", 1000), rep("Only_Circle", 1000), rep("No_Sallow", 1000)),
+  Catch = c(rpois(1000, 70000), rpois(1000, 65000), rpois(1000, 50000), rpois(1000, 55000), rpois(1000, 60000)),
+  M_total = c(rpois(1000, 50000), rpois(1000, 40000), rpois(1000, 30000), rpois(1000, 35000), rpois(1000, 45000))
+)
+
+
+MC.fakeData <- mutate(MC.fakeData, M_ret_gut = M_total * 0.2,  M_ret_lip = M_total * 0.15, 
+                      M_water_lip = M_total * 0.1, M_water_gut = M_total * 0.05,
+                      M_Boff_lip = M_total * 0.15, M_Boff_gut = M_total * 0.1,
+                      M_boat_lip = M_total * 0.1, M_boat_gut = M_total * 0.15,
+                      Mort_rate = M_total/Catch)
+
+MC.fakeDataSummary <- group_by(MC.fakeData, Scenario) %>% summarise("10th Perc" = signif(quantile(Mort_rate, 0.1), 2),
+                                                                    "50th Perc" = signif(quantile(Mort_rate, 0.5), 2), 
+                                                                    "90th Perc" = signif(quantile(Mort_rate, 0.1), 2))
 
 
 
